@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+       <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Registration</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+<body>
+    
+    <h1>Enter information</h1>
+    <form name = "first">
+        <label>Login/phone</label><br>
+        <input type="text" name="Login" /><br><br>
+        <label>Password</label><br>
+        <input type="text" name="Password" /><br><br>
+        <input type="button" onclick=GetUsers() value="Send" />
+        <input type="button" onclick=GetUser(Login.value) value="GetUser" />
+        <br><br>
+        <label>Result</label><br>
+        <input id = 'res' type="text" /><br><br>
+        </forms>
+        <script>
+           function GetUsers() {
+            alert('aaaaaaaaaaaaaaa');
+            $.ajax({
+                url: "/front/app",
+                type: "GET",
+                contentType: "application/json",
+                success: function (users) {
+                    alert( users );
+                 }
+            });
+        }
+        function GetUser(Login) {
+            alert(Login);
+            $.ajax({
+                url: "/front/app/"+Login,
+                type: "GET",
+                contentType: "application/json",
+                success: function (users) {
+                   // alert( users );
+                    document.getElementById('res').value=users;
+                    //VK(users);
+                 }
+            });
+        }
+           /* function VK (id)
+            {
+                alert(id);
+                $.ajax({
+                    //538668781c322e8b1b4935c8901acd5e1e2f1f3f832fa43ea69ec552bfa98328307306a83e74f3afcc258
+            url: 'https://api.vk.com/method/users.get?user_ids=76141337&fields=bdate&access_token='+id+'&v=5.92'            
+            type: 'GET',
+            dataType: 'jsonp',
+        })
+        .done(function(data) {
+            document.getElementById('res').value=data;
+        });
+            }
+        }*/
+        </script>
+    
+</body>
+</html>
