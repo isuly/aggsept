@@ -1,7 +1,7 @@
 
 //var vkAuth = require('vk-auth')(123456, 'friends');
 
-
+const Gmail = require("mail");
 const express = require("express");
 const bodyParser = require("body-parser");
 const jsonParser = express.json();
@@ -11,6 +11,9 @@ const MongoClient = require("mongodb").MongoClient;
 // создаем объект MongoClient и передаем ему строку подключения
 const mongoClient = new MongoClient("mongodb://localhost:27017/", { useNewUrlParser: true });
 
+const ient = new Gmail.Mail('isulyfahretdinova@gmail.com','literatyra18', 'gmail.com');
+console.log('lol');
+//const lien = lient.openInboxGmail();
 //регистрация пользователя
 app.post("/front/app/create", jsonParser, function (req, res) {
      console.log("регистрация");
@@ -90,4 +93,4 @@ app.get("/front", urlencodedParser, function (request, response) {
 app.get("/", function(request, response){
     response.send("Главная страница");
 });
-app.listen(5000);
+//app.listen(5000);
