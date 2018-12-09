@@ -11,7 +11,6 @@ const MongoClient = require("mongodb").MongoClient;
 // создаем объект MongoClient и передаем ему строку подключения
 const mongoClient = new MongoClient("mongodb://localhost:27017/", { useNewUrlParser: true });
 
-//Gmail.Message();
 //Определить тип возвращаемого заначения
 console.log('lol+'+Gmail.Message());//возраращает нормально
 //const lien = lient.openInboxGmail();

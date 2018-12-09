@@ -127,6 +127,7 @@ imap.once('end', function() {
 
 imap.connect();
 rer = "lollollol";
+
 return(rer);
 }
 /*imap.once('ready', function() {
