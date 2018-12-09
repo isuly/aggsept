@@ -14,51 +14,45 @@
         <input type="text" name="Login" /><br><br>
         <label>Password</label><br>
         <input type="text" name="Password" /><br><br>
-        <input type="button" onclick=GetUsers() value="Send" />
-        <input type="button" onclick=GetUser(Login.value) value="GetUser" />
+        <input type="button"  onclick=CreateUser(Login.value) value="Регистрация" />
+        <input type="button" onclick=GetUser(Login.value) value="Авторизация" />
         <br><br>
         <label>Result</label><br>
         <input id = 'res' type="text" /><br><br>
         </forms>
         <script>
-           function GetUsers() {
-            alert('aaaaaaaaaaaaaaa');
+                   // Добавление пользователя
+        function CreateUser(userName) {
+            alert("CreateUser");
             $.ajax({
-                url: "/front/app",
-                type: "GET",
+                url: "/front/app/create",
                 contentType: "application/json",
-                success: function (users) {
-                    alert( users );
-                 }
-            });
+                method: "POST",
+                data: JSON.stringify({
+                    name: userName,
+                    pass: '1234'
+                }),
+                //добавить параметры
+                success: function (user) {
+                    document.getElementById('res').value=user;
+                }
+            })
         }
-        function GetUser(Login) {
-            alert(Login);
+        function GetUser(userName) {
+            alert("CreateUser");
             $.ajax({
-                url: "/front/app/"+Login,
-                type: "GET",
+                url: "/front/app/search",
                 contentType: "application/json",
-                success: function (users) {
-                   // alert( users );
-                    document.getElementById('res').value=users;
-                    //VK(users);
-                 }
-            });
+                method: "POST",
+                data: JSON.stringify({
+                    name: userName,
+                    pass: '1234'
+                }),
+                success: function (user) {
+                    document.getElementById('res').value=user;
+                }
+            })
         }
-           /* function VK (id)
-            {
-                alert(id);
-                $.ajax({
-                    //538668781c322e8b1b4935c8901acd5e1e2f1f3f832fa43ea69ec552bfa98328307306a83e74f3afcc258
-            url: 'https://api.vk.com/method/users.get?user_ids=76141337&fields=bdate&access_token='+id+'&v=5.92'            
-            type: 'GET',
-            dataType: 'jsonp',
-        })
-        .done(function(data) {
-            document.getElementById('res').value=data;
-        });
-            }
-        }*/
         </script>
     
 </body>

@@ -1,132 +1,93 @@
 
-var vkAuth = require('vk-auth')(123456, 'audio');
+//var vkAuth = require('vk-auth')(123456, 'friends');
 
 
 const express = require("express");
 const bodyParser = require("body-parser");
-  const jsonParser = express.json();
+const jsonParser = express.json();
 const app = express();
-  var globall;
-// создаем парсер для данных application/x-www-form-urlencoded
 const urlencodedParser = bodyParser.urlencoded({extended: false});
- const MongoClient = require("mongodb").MongoClient;
- 
+const MongoClient = require("mongodb").MongoClient;
 // создаем объект MongoClient и передаем ему строку подключения
 const mongoClient = new MongoClient("mongodb://localhost:27017/", { useNewUrlParser: true });
-/*mongoClient.connect(function(err, client){
- 
-    if(err){
-        return console.log(err);
-    }
-    // взаимодействие с базой данных
-    client.close();
-});*/
-app.get("/front/app", urlencodedParser, function (request, response) {
-       console.log("AAAAAAAAAAAAAAAAAAAAA!");
-    if(!request.body) return response.sendStatus(400);
-     //creating an object
-/*mongoClient.connect(function(err, client){
-      
-    const db = client.db("UserInfo");
+
+//регистрация пользователя
+app.post("/front/app/create", jsonParser, function (req, res) {
+     console.log("регистрация");
+    if(!req.body) return res.sendStatus(400);
+     //creating an object
+     Login = req.body.name;
+     Password = req.body.pass;
+    console.log(req.body.name);
+    console.log(req.body.pass);
+    const user = {login: Login, password: Password};
+    mongoClient.connect(function(err, client){
+    	//где пусто дописать дефолтные значения
+    const db = client.db("final");
     const collection = db.collection("users");
-    let user = {login: request.body.Login, password: request.body.Password};
-    collection.insertOne(user, function(err, result){
-          
-        if(err){ 
-            return console.log(err);
-        }
-        console.log(result.ops);
-        console.log("Юзер добавлен!");
-        client.close();
-    });*/
-    var tmp = 'kek';
-    response.send(tmp);
-    });
-//});
-app.get("/front/app/:id", urlencodedParser, function (request, response) {
-       console.log("AAAAAAAAAA!");
-const id = Number(request.params.id);
-console.log(id);
-    if(!request.body) return response.sendStatus(400);
-     //creating an object
-mongoClient.connect(function(err, client){
-      
-    const db = client.db("users");
-    const collection = db.collection("UserInfo");
-   // var user = {id: 3, login: 'lol', password: sdfghj};
-   collection.findOne({id: id}, function(err, user){//find one
-               
-        if(err) return console.log(err);
-globall=user;
-        console.log(globall);
-           vkAuth.authorize(globall.login, globall.password);
-    vkAuth.on('error', function(err) {
-    console.log(err);
-});
-    vkAuth.on('auth', function(tokenParams) {
-    console.log ('kek '+tokenParams.access_token);
-    response.send(tokenParams.access_token);
-});
-  // vkAu
-        //response.send(user);//return one
-    });
-   //console.log(globall);
- /*  vkAuth.authorize(globall.login, globall.password);
-    vkAuth.on('error', function(err) {
-    console.log(err);
-});
-    vkAuth.on('auth', function(tokenParams) {
-    console.log ('kek '+tokenParams.user_id);
-    response.send(`user_id =` +tokenParams.user_id);
-});*/
-   //response.send();
-    /*collection.insertOne(user, function(err, result){
-          
-        if(err){ 
-            return console.log(err);
-        }
-        console.log(result.ops);
-        console.log("Юзер добавлен!");
-        client.close();*/
+    //проверять уникальность логина
+    collection.insertOne(user, function(err, result){//
+               
+        if(err) 
+        	{return console.log(err);
+        				console.log("Регистрация не прошла");
+		res.send('Регистрация не прошла');
+        	}
+        	else
+        	{
+    	console.log("Регисрация прошла успешно");
+    res.send("Регистрация прошла успешно");
+    }
     });
+});
+});
+
+//авторизация
+app.post("/front/app/search", jsonParser, function (req, res) {
+       console.log("Aвторизация");
+	Login = req.body.name;
+     Password = req.body.pass;
+    console.log(req.body.name);
+    console.log(req.body.pass);
+    if(!req.body) return res.sendStatus(400);
+
+	mongoClient.connect(function(err, client){
+      
+    const db = client.db("final");
+    const collection = db.collection("users");
+    collection.findOne({login: Login, password: Password}, function(err, user){//find one
+    if(err) 
+	{
+		return console.log(err);
+		console.log("Aвторизация не прошла");
+		res.send('Aвторизация не прошла');
+	}
+	else
+	{
+		try
+		{
+		if(user.login)
+		{
+			console.log("Aвторизация прошла успешно");
+    		res.send("Aвторизация прошла успешно");
+		}
+		}
+		catch
+		{
+			console.log("Aвторизация не прошла");
+		res.send('Aвторизация не прошла');
+		}
+	}
+});
+});
+});
     
-    });
+   //запуск фронта
 app.get("/front", urlencodedParser, function (request, response) {
     response.sendFile(__dirname + "/front.html");
 });
-/*app.post("/front", urlencodedParser, function (request, response) {
-    if(!request.body) {return response.sendStatus(400);}
-    else
-    {
-        mongoClient.connect(function(err, client){
-      
-    const db = client.db("UserInfo");
-    const collection = db.collection("users");
-    let user = {login: request.body.Login, password: request.body.Password};
-    collection.insertOne(user, function(err, result){
-          
-        if(err){ 
-            return console.log(err);
-        }
-        console.log(result.ops);
-        console.log("Юзер добавлен!");
-        client.close();
-    });
-   console.log(request.body);
-    vkAuth.authorize(request.body.Login, request.body.Password);
-    vkAuth.on('error', function(err) {
-    //console.log(err);
-});
 
-vkAuth.on('auth', function(tokenParams) {
-    console.log ('kek '+tokenParams.user_id);
-    response.send(`user_id =` +tokenParams.user_id);
-});
-    })
-}
-});*/
-  
 app.get("/", function(request, response){
     response.send("Главная страница");
 });
-app.listen(3000);
+app.listen(5000);
