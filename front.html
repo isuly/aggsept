@@ -16,12 +16,13 @@
         <input type="text" name="Password" /><br><br>
         <input type="button"  onclick=CreateUser(Login.value) value="Регистрация" />
         <input type="button" onclick=GetUser(Login.value) value="Авторизация" />
+         <input type="button" onclick=getGmail() value="Gmail" />
         <br><br>
         <label>Result</label><br>
         <input id = 'res' type="text" /><br><br>
         </forms>
         <script>
-                   // Добавление пользователя
+                   // Добавление пользователя - регистрация
         function CreateUser(userName) {
             alert("CreateUser");
             $.ajax({
@@ -38,8 +39,9 @@
                 }
             })
         }
+        //авторизация
         function GetUser(userName) {
-            alert("CreateUser");
+            alert("авторизация");
             $.ajax({
                 url: "/front/app/search",
                 contentType: "application/json",
@@ -53,6 +55,17 @@
                 }
             })
         }
+        function getGmail() {
+            alert("gmail");
+            $.ajax({
+                url: "/front/gmail",
+                type: "GET",
+                contentType: "application/json",
+                success: function (user) {
+                    document.getElementById('res').value=user; 
+                 }
+             })
+            }
         </script>
     
 </body>
