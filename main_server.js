@@ -65,8 +65,6 @@ app.post("/front/app/search", jsonParser, function (req, res) {
     const db = client.db("final");
     const collection = db.collection("users");
     collection.findOne({login: Login, password: Password}, function(err, user){
-    		Mail.Connect("isulyshka@mail.ru", 'literatyra', "mail.ru");//передавать инфу из бд
-			global.mail_massages = new Mail.Message();//вызываем метод вытягивания сообщений из майл
     if(err) 
 	{
 		return console.log(err);
@@ -109,7 +107,7 @@ app.get("/front/gmail", urlencodedParser, function (req, res) {
 	console.log(gmail_massages[i].head);
 	console.log(gmail_massages[i].body);
 }
-	res.send(mail_massages[1].body);
+	res.send(mail_massages);
 });
 
 
