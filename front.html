@@ -16,7 +16,9 @@
         <input type="text" name="Password" /><br><br>
         <input type="button"  onclick=CreateUser(Login.value) value="Регистрация" />
         <input type="button" onclick=GetUser(Login.value) value="Авторизация" />
-         <input type="button" onclick=getGmail() value="Gmail" />
+        <input type="button" onclick=getGmail() value="Gmail" />
+        <input type="button" onclick=getMail() value="Mail" />
+        <input type="button" onclick=getYandex() value="Yandex" />
         <br><br>
         <label>Result</label><br>
         <input id = 'res' type="text" /><br><br>
@@ -59,6 +61,28 @@
             alert("gmail");
             $.ajax({
                 url: "/front/gmail",
+                type: "GET",
+                contentType: "application/json",
+                success: function (user) {
+                    document.getElementById('res').value=user; 
+                 }
+             })
+            }
+             function getMail() {
+            alert("mail");
+            $.ajax({
+                url: "/front/mail",
+                type: "GET",
+                contentType: "application/json",
+                success: function (user) {
+                    document.getElementById('res').value=user; 
+                 }
+             })
+            }
+             function getYandex() {
+            alert("yandex");
+            $.ajax({
+                url: "/front/yandex",
                 type: "GET",
                 contentType: "application/json",
                 success: function (user) {
