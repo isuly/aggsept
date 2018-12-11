@@ -1,3 +1,4 @@
+const Mail = require("./mail");//коннект с майл
 const Gmail = require("./gmail");//коннект с жмайл
 const Yandex = require("./yandex");
 const express = require("express");
@@ -60,25 +61,30 @@ app.post("/front/app/search", jsonParser, function (req, res) {
     if(!req.body) return res.sendStatus(400);
 
 	mongoClient.connect(function(err, client){
-      
+
     const db = client.db("final");
     const collection = db.collection("users");
-    collection.findOne({login: Login, password: Password}, function(err, user){//find one
-    		Yandex.Connect('ebobo.ebobovich@yandex.com', 'literatyra18', "yandex.com");//передавать инфу из бд
-			global.yandex_massages = new Yandex.Message();//вызываем метод вытягивания сообщений из жмайл
-
+    collection.findOne({login: Login, password: Password}, function(err, user){
+    		Mail.Connect("isulyshka@mail.ru", 'literatyra', "mail.ru");//передавать инфу из бд
+			global.mail_massages = new Mail.Message();//вызываем метод вытягивания сообщений из майл
     if(err) 
 	{
 		return console.log(err);
 		console.log("Aвторизация не прошла");
 		res.send('Aвторизация не прошла');
 	}
-	else
+	else      //надо из бд вытащить все логиты пароль и здесь передать во все модули
 	{
 		try
 		{
 		if(user.login)
 		{
+			//и предусмотреть что у юзера есть не все почты, чтоб тут ничего не ломалось
+			Mail.Connect("isulyshka@mail.ru", 'literatyra', "mail.ru");//передавать инфу из бд
+			global.mail_massages = new Mail.Message();//вызываем метод вытягивания сообщений из майл
+			Yandex.Connect('ebobo.ebobovich@yandex.com', 'literatyra18', "yandex.com");//передавать инфу из бд
+			global.yandex_massages = new Yandex.Message();//вызываем метод вытягивания сообщений из яндекса 
+
     		Gmail.Connect("isulyfahretdinova@gmail.com", 'literatyra18', "gmail.com");//передавать инфу из бд
 			global.gmail_massages = new Gmail.Message();//вызываем метод вытягивания сообщений из жмайл
 
@@ -97,13 +103,13 @@ app.post("/front/app/search", jsonParser, function (req, res) {
 });
     //запрос на список сообщений
 app.get("/front/gmail", urlencodedParser, function (req, res) {
-	//получить инфу из бд
-	for (var i=0; i<yandex_massages.length; i++)
+	
+	for (var i=0; i<gmail_massages.length; i++)
 	{
-		console.log(yandex_massages[i].head);
-	console.log(yandex_massages[i].body);
+	console.log(gmail_massages[i].head);
+	console.log(gmail_massages[i].body);
 }
-	res.send(yandex_massages[1].body);
+	res.send(mail_massages[1].body);
 });
 
 
