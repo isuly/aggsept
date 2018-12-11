@@ -1,4 +1,5 @@
 const Gmail = require("./gmail");//коннект с жмайл
+const Yandex = require("./yandex");
 const express = require("express");
 const bodyParser = require("body-parser");
 const jsonParser = express.json();
@@ -7,7 +8,8 @@ const urlencodedParser = bodyParser.urlencoded({extended: false});
 const MongoClient = require("mongodb").MongoClient;
 const mongoClient = new MongoClient("mongodb://localhost:27017/", { useNewUrlParser: true });
 
-//передавать из бд логин и пароль???
+
+//ПЕРЕМЕСТИЛА ВЫЗОВ В АВТОРИЗАЦИЮ
 //Gmail.Connect("isulyfahretdinova@gmail.com", 'literatyra18', "gmail.com");
 //global.gmail_massages = new Gmail.Message();//вызываем метод вытягивания сообщений из жмайл
 //это глобальная переменная, куда попало не тыкать, как попало не называть!!!
@@ -48,7 +50,6 @@ app.post("/front/app/create", jsonParser, function (req, res) {//регистр�
     });
 });
 });
-
 //авторизация
 app.post("/front/app/search", jsonParser, function (req, res) {
        console.log("Aвторизация");
@@ -63,8 +64,9 @@ app.post("/front/app/search", jsonParser, function (req, res) {
     const db = client.db("final");
     const collection = db.collection("users");
     collection.findOne({login: Login, password: Password}, function(err, user){//find one
-    				Gmail.Connect("isulyfahretdinova@gmail.com", 'literatyra18', "gmail.com");
-			global.gmail_massages = new Gmail.Message();
+    		Yandex.Connect('ebobo.ebobovich@yandex.com', 'literatyra18', "yandex.com");//передавать инфу из бд
+			global.yandex_massages = new Yandex.Message();//вызываем метод вытягивания сообщений из жмайл
+
     if(err) 
 	{
 		return console.log(err);
@@ -77,6 +79,8 @@ app.post("/front/app/search", jsonParser, function (req, res) {
 		{
 		if(user.login)
 		{
+    		Gmail.Connect("isulyfahretdinova@gmail.com", 'literatyra18', "gmail.com");//передавать инфу из бд
+			global.gmail_massages = new Gmail.Message();//вызываем метод вытягивания сообщений из жмайл
 
 			console.log("Aвторизация прошла успешно");
     		res.send("Aвторизация прошла успешно");
@@ -94,8 +98,12 @@ app.post("/front/app/search", jsonParser, function (req, res) {
     //запрос на список сообщений
 app.get("/front/gmail", urlencodedParser, function (req, res) {
 	//получить инфу из бд
-	console.log(gmail_massages[0].body);
-	res.send(gmail_massages[0].body);
+	for (var i=0; i<yandex_massages.length; i++)
+	{
+		console.log(yandex_massages[i].head);
+	console.log(yandex_massages[i].body);
+}
+	res.send(yandex_massages[1].body);
 });
 
 

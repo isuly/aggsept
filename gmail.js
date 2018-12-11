@@ -28,11 +28,11 @@ var Imap;
 var count=0;
 Imap = require('imap'),
 inspect = require('util').inspect;
-User = "isulyfahretdinova@gmail.com";
-Password = "literatyra18";
-Host = "gmail.com";
+//User = "isulyfahretdinova@gmail.com";
+//Password = "literatyra18";
+//Host = "gmail.com";
 
-module.exports.Connect = function(User, Password, Host)
+module.exports.Connect = function(User, Password, Host)//передаем почту, пароль и хост
 {
 imap = new Imap({
   user: User,
@@ -44,10 +44,8 @@ imap = new Imap({
 }
 var hm;
 var message = {};
-var rezz = {};
 global.myList = new Array();
-var result;
-var g = 5;
+
 function openInboxGmail(cb) {
   imap.openBox('INBOX', true, cb);
 }
