@@ -19,6 +19,7 @@
         <input type="button" onclick=getGmail() value="Gmail" />
         <input type="button" onclick=getMail() value="Mail" />
         <input type="button" onclick=getYandex() value="Yandex" />
+        <input type="button" onclick=SendEmail() value="Yandex" />
         <br><br>
         <label>Result</label><br>
         <input id = 'res' type="text" /><br><br>
@@ -90,6 +91,22 @@
                  }
              })
             }
+
+            function SendEmail(userName) {
+            alert("авторизация");
+            $.ajax({
+                url: "/front/app/send",
+                contentType: "application/json",
+                method: "POST",
+                data: JSON.stringify({
+                    name: userName,
+                    pass: '1234'
+                }),
+                success: function (user) {
+                    document.getElementById('res').value=user;
+                }
+            })
+        }
         </script>
     
 </body>

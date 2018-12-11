@@ -1,6 +1,7 @@
 const Mail = require("./mail");//коннект с майл
 const Gmail = require("./gmail");//коннект с жмайл
 const Yandex = require("./yandex");
+const SendMail = require("./sendmail");
 const express = require("express");
 const bodyParser = require("body-parser");
 const jsonParser = express.json();
@@ -9,7 +10,7 @@ const urlencodedParser = bodyParser.urlencoded({extended: false});
 const MongoClient = require("mongodb").MongoClient;
 const mongoClient = new MongoClient("mongodb://localhost:27017/", { useNewUrlParser: true });
 
-
+global.UserLogin;
 //ПЕРЕМЕСТИЛА ВЫЗОВ В АВТОРИЗАЦИЮ
 //Gmail.Connect("isulyfahretdinova@gmail.com", 'literatyra18', "gmail.com");
 //global.gmail_massages = new Gmail.Message();//вызываем метод вытягивания сообщений из жмайл
@@ -85,7 +86,7 @@ app.post("/front/app/search", jsonParser, function (req, res) {
 
     		Gmail.Connect("isulyfahretdinova@gmail.com", 'literatyra18', "gmail.com");//передавать инфу из бд
 			global.gmail_massages = new Gmail.Message();//вызываем метод вытягивания сообщений из жмайл
-
+			UserLogin = Login;
 			console.log("Aвторизация прошла успешно");
     		res.send("Aвторизация прошла успешно");
 		}
@@ -99,7 +100,7 @@ app.post("/front/app/search", jsonParser, function (req, res) {
 });
 });
 });
-    //запрос на список сообщений
+    //запрос на список сообщений +2
 app.get("/front/gmail", urlencodedParser, function (req, res) {
 	
 	for (var i=0; i<gmail_massages.length; i++)
@@ -107,8 +108,105 @@ app.get("/front/gmail", urlencodedParser, function (req, res) {
 	console.log(gmail_massages[i].head);
 	console.log(gmail_massages[i].body);
 }
-	res.send(mail_massages);
+	res.send(gmail_massages);
+	//SendMail.MailSend();
 });
+//написать такой же на майл и яндекс
+
+//пост запрос на отправку сообщения
+
+
+app.post("/front/app/send", jsonParser, function (req, res) { //отправка сообщения на почты
+       console.log("Отправка");
+	var To = req.body.to;
+	var Host = req.body.host;
+    var Subject =req.body.subject;
+    var Text = req.body.text;
+
+
+	var To = "isulyshka@mail.ru";
+	var Host = "mail.ru";
+    var Subject = 'тест в mail';
+    var Text = 'вжух вжух';
+
+    var From, Password;
+    //console.log(req.body.name);
+    //console.log(req.body.pass);
+    if(!req.body) return res.sendStatus(400);
+
+	mongoClient.connect(function(err, client){
+
+    const db = client.db("final");
+    //const collection = db.collection("users");
+    //collection.findOne({login: UserLogin}, function(err, user){
+    if(false) 
+	{
+		return console.log(err);
+		//console.log("Aвторизация не прошла");
+		//res.send('Aвторизация не прошла');
+	}
+	else     //пока хардкод но работает
+	{
+		try
+		{
+		//if(user.login)
+		//{
+			/*switch (host)
+			{
+				case ('mail.ru'):
+				{
+					From = user.mail_login;
+					Password = user.mail_password;
+				};
+				case ('gmail.com'):
+				{
+					From = user.gmail_login;
+					Password = user.gmail_password;
+				};
+				case ('yandex.com'):
+				{
+					From = user.yandex_login;
+					Password = user.yandex_password;
+				};
+
+			}*/
+				SendMail.MailSend();//передать нужные параметры
+				//убрать хардкод из библы
+			//}
+			console.log("Сообщение отправлено");
+    		res.send("Сообщение отправлено");
+		}
+		//}
+		catch
+		{
+			console.log("Что-то пошло не так");
+    		res.send("Что-то пошло не так");
+		}
+	}
+
+});
+});
+//});
+
+app.get("/front/mailNumber", urlencodedParser, function (req, res) {//конкретное сообщение из майл
+	
+	//var number = ?????????????
+	res.send(mail_massages[number].body);
+});
+
+
+app.get("/front/gmailNumber", urlencodedParser, function (req, res) {//конкретное сообщение из жмайл
+	
+//var number = ?????????????
+	res.send(gmail_massages[number].body);
+});
+
+
+app.get("/front/yandexNumber", urlencodedParser, function (req, res) {//конкретное сообщение из яндекса
+//var number = ?????????????
+	res.send(yandex_massages[number].body);
+});
+
 
 
    //запуск фронта
