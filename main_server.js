@@ -68,8 +68,8 @@ app.post("/front/app/create", jsonParser, function (req, res) {//регистр�
 });
 });
 
-
-app.post("/front/app/createall", jsonParser, function (req, res) {//регистрация остальных
+//**********************************************************
+/*app.post("/front/app/createall", jsonParser, function (req, res) {//регистрация остальных
      console.log("регистрация остальных");
     if(!req.body) return res.sendStatus(400);
      Login = req.body.name;
@@ -86,7 +86,7 @@ console.log("Регистрация прошла успешно");
     			    resp.result = true;
 	res.send(resp);
 });
-});
+});*/
 
 
 
@@ -185,7 +185,7 @@ app.get("/front/gmail", urlencodedParser, function (req, res) {
 
 //пост запрос на отправку сообщения
 
-
+//**********************************************************
 app.post("/front/app/send", jsonParser, function (req, res) { //отправка сообщения на почты
        console.log("Отправка");
 	var To = req.body.to;
@@ -265,29 +265,29 @@ var resp = {};
 app.get("/front/mailNumber/:num", urlencodedParser, function (req, res) {//конкретное сообщение из майл
 	
 	const number = Number(request.params.num);
-	res.send(mail_massages);
+	res.send(mail_massages[number].body);
 });
 
 
 app.get("/front/gmailNumber/:num", urlencodedParser, function (req, res) {//конкретное сообщение из жмайл
 	
 const number = Number(request.params.num);
-	res.send(gmail_massages);
+	res.send(gmail_massages[number].body);
 });
 
 
 app.get("/front/yandexNumber/:num", urlencodedParser, function (req, res) {//конкретное сообщение из яндекса
 const number = Number(request.params.num);
-	res.send(yandex_massages);
+	res.send(yandex_massages[number].body);
 });
 
-
+//дописать передачу параметров
 app.post("/front/app/sendinst", jsonParser, function (req, res) {
     console.log("send inst");
     sendDirectMessage.sendDM('ms.isulysha', 'literatyra18', 'imciflam', 'it works');
 });
 
-
+//дописать передачу параметров
  app.get("/about", function(request, response)
  {
       
@@ -357,12 +357,14 @@ let promise = new Client.Session.create(device, storage, 'ms.isulysha', 'literat
   })         
 });
 
-
+//дописать передачу параметров
  app.get("/all", function(request, response)
  {
+ 
         
 var chatThread = {};
 var msgs = [];
+var flags = [];
 chatThread.msgs = msgs;
 
 let promise = Client.Session.create(device, storage, 'ms.isulysha', 'literatyra18')
@@ -416,58 +418,43 @@ let promise = Client.Session.create(device, storage, 'ms.isulysha', 'literatyra1
                         "msgSide": 0
                      }
                      chatThread.msgs.push(msg); 
-
-                 // console.log(messages[i]._params.userId);
-                  //console.log(messages[i]._params.text);
+    
                   storage.getAccountId()
                   .then(function(accountId)
                   {  
-                  if (messages[i]._params.userId==accountId && messages[i]._params.userId !="undefined")
-                     { 
-                    
-                    // var x = getUsernameById(messages[i]._params.userId);
-                     console.log('message ' + i+ ' was written by current user'); 
-                    chatThread.msgs[i].msgSide = 1;
+                  if (messages[i]._params.userId==accountId)
+                     {  
+                    chatThread.msgs[i].msgSide = 1; 
  
-                     } 
-                     reversedArray = chatThread.msgs.reverse()
+                     }  
+                     chatThread.msgs.push("msgSide: " + chatThread.msgs[i].msgSide); 
+                    delete chatThread.msgs[i]['msgSide'];
+ 
+
                      if (i==0)
-                    { 
-                        var reversedThread = {};
-                        reversedThread.reversedArray = reversedArray;
-                      //  console.log (reversedArray);
-                         response.send(reversedThread);
+                    {  
+                      console.log(chatThread);
+                       response.send(chatThread);
+
+
+
+
+
+
+
+                      //  var reversedThread = {};
+                      //  reversedThread.reversedArray = reversedArray; 
+                        // console.log(reversedArray); 
+                        // response.send(reversedThread);
                     }
                   }) 
-
               }
-
-
-             } 
-               
+             }    
          }
-
         })
        })
- 
       })
-
-
-      /* function getUsernameById(userId)
-        {
-        Client.Account.getById(session, userId)
-       .then(function(accountInstance) {
-        var currentUserName = accountInstance.params.username;
-          console.log(accountInstance.params.username);
-         console.log(accountInstance.params.profilePicUrl);
-        //sleep(1000);
-        return currentUserName;
-       }) 
-     }*/
-
-
     })
-
 });
 
 
