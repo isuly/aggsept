@@ -57,7 +57,7 @@ imap.once('ready', function() {
     if (err) throw err;
        // console.log("You have messages in your INBOX: "+box.messages.total);//считает правильно
     var f = imap.seq.fetch(box.messages.total-3+':'+box.messages.total, {//3 последних
-      bodies: ['HEADER.FIELDS (FROM TO SUBJECT DATE)','TEXT'],
+      bodies: ['HEADER.FIELDS (FROM SUBJECT DATE)','TEXT'],
       struct: true
     });
     f.on('message', function(msg, seqno) {
@@ -94,8 +94,54 @@ imap.once('ready', function() {
           try
           {
           var kek = Buffer.from(hm, 'base64').toString('utf8');
+          //console.log(kek);
           var message = {};
-          message.head = tmp;
+         
+          var i=11;
+          var name='', addres='';
+          while(tmp[i]!='<')
+          {
+            name+=tmp[i];
+            //j++; 
+            i++;
+          }
+          //console.log(name);
+          i++;
+          while(tmp[i]!='>')
+          {
+            addres+=tmp[i];
+            //j++; 
+            i++;
+          }
+          //console.log(addres);
+           while(tmp[i]!='[')
+          {
+            i++;
+          }
+          i+=2;
+          var subj = '';
+          while(tmp[i]!=']')
+          {
+            subj+=tmp[i];
+            i++;
+          }
+         // console.log(subj);
+          while(tmp[i]!='[')
+          {
+            i++;
+          }
+          i+=3;
+          var date='';
+          while(tmp[i]!='+')
+          {
+            date+=tmp[i];
+            i++;
+          }
+         // console.log(date);
+          message.name = name;
+          message.from = addres;
+          message.subject = subj;
+          message.date = date;
           message.body = kek;
           myList[count]=message;
           count++;

@@ -19,7 +19,10 @@
         <input type="button" onclick=getGmail() value="Gmail" />
         <input type="button" onclick=getMail() value="Mail" />
         <input type="button" onclick=getYandex() value="Yandex" />
-        <input type="button" onclick=SendEmail() value="Yandex" />
+        <input type="button" onclick=SendEmail() value="SendEmail" />
+        <input type="button" onclick=SendInst() value="SendInst" />
+        <input type="button" onclick=GetFive() value="GetFive" />
+        <input type="button" onclick=GetAll() value="GetAll" />
         <br><br>
         <label>Result</label><br>
         <input id = 'res' type="text" /><br><br>
@@ -38,7 +41,7 @@
                 }),
                 //добавить параметры
                 success: function (user) {
-                    document.getElementById('res').value=user;
+                    console.log(user);
                 }
             })
         }
@@ -54,7 +57,8 @@
                     pass: '1234'
                 }),
                 success: function (user) {
-                    document.getElementById('res').value=user;
+                    console.log(user);
+                   //document.getElementById('res').value=user;
                 }
             })
         }
@@ -65,7 +69,7 @@
                 type: "GET",
                 contentType: "application/json",
                 success: function (user) {
-                    document.getElementById('res').value=user; 
+                    console.log(user);
                  }
              })
             }
@@ -76,7 +80,7 @@
                 type: "GET",
                 contentType: "application/json",
                 success: function (user) {
-                    document.getElementById('res').value=user; 
+                    console.log(user);
                  }
              })
             }
@@ -87,7 +91,7 @@
                 type: "GET",
                 contentType: "application/json",
                 success: function (user) {
-                    document.getElementById('res').value=user; 
+                    console.log(user);
                  }
              })
             }
@@ -103,10 +107,48 @@
                     pass: '1234'
                 }),
                 success: function (user) {
-                    document.getElementById('res').value=user;
+                    console.log(user);
                 }
             })
         }
+            function SendInst() {
+            alert("inst");
+            $.ajax({
+                url: "/front/app/sendinst",
+                contentType: "application/json",
+                method: "POST",
+                data: JSON.stringify({
+                    name: '159',
+                    pass: '1234'
+                }),
+                success: function (user) {
+                    console.log(user);
+                }
+             })
+            }
+
+            function GetFive() {
+            alert("55555555555");
+             $.ajax({
+                url: "/about",
+                contentType: "application/json",
+                success: function (data) {
+                    console.log(data);
+                 }
+            })
+            }
+
+
+            function GetAll() {
+            alert("all");
+             $.ajax({
+                url: "/all",
+                contentType: "application/json",
+                success: function (data) {
+                    console.log(data);
+                 }
+            })
+            }
         </script>
     
 </body>

@@ -72,7 +72,51 @@ imap.once('ready', function() {
           {
           //var kek = Buffer.from(hm, 'base64').toString('utf8');
           var message = {};
-          message.head = inspect(Imap.parseHeader(buffer).subject);
+          //message.head = inspect(Imap.parseHeader(buffer).from);
+          var tmp = inspect(Imap.parseHeader(buffer).from);
+          var i=3;
+          var name='', addres='';
+          while(tmp[i]!='<')
+          {
+            name+=tmp[i];
+            //j++; 
+            i++;
+          }
+          //console.log(name);
+          i++;
+          while(tmp[i]!='>')
+          {
+            addres+=tmp[i];
+            //j++; 
+            i++;
+          }
+          //console.log(addres);
+          var i =0;
+          i+=2;
+          var subj='';
+          var tmp = inspect(Imap.parseHeader(buffer).subject);
+          while(tmp[i]!=']')
+          {
+            subj+=tmp[i];
+            i++;
+          }
+          //console.log(subj);
+          var i =0;
+          i+=3;
+          var date='';
+          var tmp = inspect(Imap.parseHeader(buffer).date);
+          while(tmp[i]!='+')
+          {
+            date+=tmp[i];
+            i++;
+          }
+          //console.log(date);
+         // message.head = date;
+          message.name = name;
+          message.from = addres;
+          message.subject = subj;
+          message.date = date;
+          //message.head = inspect(Imap.parseHeader(buffer).subject);
           //message.body = kek;
           //console.log(message.head);
          // console.log(message.body);
