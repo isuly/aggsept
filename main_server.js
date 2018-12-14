@@ -484,6 +484,34 @@ let promise = Client.Session.create(device, storage, 'ms.isulysha', 'literatyra1
 });
 
 
+
+//обновление
+app.get("/front/app/search", jsonParser, function (req, res) {
+       console.log("обновление");
+//сдалать конект с бд
+			//и предусмотреть что у юзера есть не все почты, чтоб тут ничего не ломалось
+			Mail.Connect("isulyshka@mail.ru", 'literatyra', "mail.ru");//передавать инфу из бд
+			global.mail_massages = new Mail.Message();//вызываем метод вытягивания сообщений из майл
+			response.send(mail_massages);
+});
+//обновление
+app.get("/front/app/search", jsonParser, function (req, res) {
+       console.log("обновление");
+//сдалать конект с бд
+
+    		Gmail.Connect("isulyfahretdinova@gmail.com", 'literatyra18', "gmail.com");//передавать инфу из бд
+			global.gmail_massages = new Gmail.Message();//вызываем метод вытягивания сообщений из жмайл
+			response.send(gmail_massages);
+});
+//обновление
+app.get("/front/app/search", jsonParser, function (req, res) {
+       console.log("обновление");
+//сдалать конект с бд
+			Yandex.Connect('ebobo.ebobovich@yandex.com', 'literatyra18', "yandex.com");//передавать инфу из бд
+			global.yandex_massages = new Yandex.Message();//вызываем метод вытягивания сообщений из яндекса 
+			response.send(yandex_massages);
+});
+
    //запуск фронта
 app.get("/front", urlencodedParser, function (request, response) {
     response.sendFile(__dirname + "/front.html");
