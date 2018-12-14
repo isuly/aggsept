@@ -46,7 +46,8 @@ app.post("/front/app/create", jsonParser, function (req, res) {//регистр�
     console.log(req.body.name);
     console.log(req.body.pass);
     UserLogin = Login;
-    const user = {login: Login, password: Password};
+    const user = {login: Login, password: Password, mail_login: '' ,mail_password: '' , gmail_login:'' , gmail_password:  '' ,
+        yandex_login: '' , yandex_password: '' , inst_login: '' ,inst_password: ''};
     mongoClient.connect(function(err, client){
     const db = client.db("final");
     const collection = db.collection("users");
@@ -54,22 +55,22 @@ app.post("/front/app/create", jsonParser, function (req, res) {//регистр�
     collection.insertOne(user, function(err, result){//
                
         if(err) 
-        	{return console.log(err);
-       			 console.log("Регистрация не прошла");
-					    resp.result = false;
-	res.send(resp);
+        	{
+        		return console.log(err);
+       			console.log("Регистрация не прошла");
+				resp.result = false;
+				res.send(resp);
         	}
         	else
         	{
     			console.log("Регистрация прошла успешно");
-    			    resp.result = true;
-	res.send(resp);
+    			resp.result = true;
+				res.send(resp);
     }
     });
 });
 });
 
-//**********************************************************
 app.post("/front/app/createall", jsonParser, function (req, res) {//регистрация остальных
      console.log("регистрация остальных");
       var resp = {};
@@ -90,7 +91,6 @@ app.post("/front/app/createall", jsonParser, function (req, res) {//регист
     mongoClient.connect(function(err, client){
     const db = client.db("final");
     const collection = db.collection("users");
-    //переименовать поля в бд
     collection.findOneAndUpdate(
         {login: Login},              // критерий выборки
         { $set: {mail_login: MailLogin,mail_password:  MailPassword, gmail_login: GmailLogin, gmail_password:  GmailPassword,
@@ -131,8 +131,8 @@ app.post("/front/app/search", jsonParser, function (req, res) {
 			//Yandex.Connect('ebobo.ebobovich@yandex.com', 'literatyra18', "yandex.com");//передавать инфу из бд
 			//global.yandex_massages = new Yandex.Message();//вызываем метод вытягивания сообщений из яндекса 
 
-    		Gmail.Connect("isulyfahretdinova@gmail.com", 'literatyra18', "gmail.com");//передавать инфу из бд
-			global.gmail_massages = new Gmail.Message();//вызываем метод вытягивания сообщений из жмайл
+    	//	Gmail.Connect("isulyfahretdinova@gmail.com", 'literatyra18', "gmail.com");//передавать инфу из бд
+		//	global.gmail_massages = new Gmail.Message();//вызываем метод вытягивания сообщений из жмайл
 	mongoClient.connect(function(err, client){
 
     const db = client.db("final");
@@ -146,20 +146,28 @@ app.post("/front/app/search", jsonParser, function (req, res) {
 		    resp.result = false;
 	res.send(resp);
 	}
-	else      //надо из бд вытащить все логиты пароль и здесь передать во все модули
+	else      
 	{
 		try
 		{
-		if(user.login)
+		if(user.login)//и предусмотреть что у юзера есть не все почты, чтоб тут ничего не ломалось
 		{
-			//и предусмотреть что у юзера есть не все почты, чтоб тут ничего не ломалось
-			Mail.Connect("isulyshka@mail.ru", 'literatyra', "mail.ru");//передавать инфу из бд
+			
+			/*Mail.Connect(mail_login, mail_password, "mail.ru");//передавать инфу из бд
 			global.mail_massages = new Mail.Message();//вызываем метод вытягивания сообщений из майл
 			Yandex.Connect('ebobo.ebobovich@yandex.com', 'literatyra18', "yandex.com");//передавать инфу из бд
 			global.yandex_massages = new Yandex.Message();//вызываем метод вытягивания сообщений из яндекса 
 
     		Gmail.Connect("isulyfahretdinova@gmail.com", 'literatyra18', "gmail.com");//передавать инфу из бд
-			global.gmail_massages = new Gmail.Message();//вызываем метод вытягивания сообщений из жмайл
+			global.gmail_massages = new Gmail.Message();*///вызываем метод вытягивания сообщений из жмайл
+
+
+			Mail.Connect(user.mail_login, user.mail_password, "mail.ru");//передавать инфу из бд
+			global.mail_massages = new Mail.Message();//вызываем метод вытягивания сообщений из майл
+			Yandex.Connect(user.yandex_login, user.yandex_password, "yandex.com");//передавать инфу из бд
+			global.yandex_massages = new Yandex.Message();//вызываем метод вытягивания сообщений из яндекса 
+    		Gmail.Connect(user.gmail_login, user.gmail_password, "gmail.com");//передавать инфу из бд
+			global.gmail_massages = new Gmail.Message();
 			UserLogin = Login;
 			console.log("Aвторизация прошла успешно");
     		    resp.result = true;
@@ -209,8 +217,8 @@ app.get("/front/gmail", urlencodedParser, function (req, res) {
 	//SendMail.MailSend();
 });
 
-//пост запрос на отправку сообщения
 
+//пост запрос на отправку сообщения
 //**********************************************************
 app.post("/front/app/send", jsonParser, function (req, res) { //отправка сообщения на почты
        console.log("Отправка");
@@ -307,10 +315,28 @@ const number = Number(request.params.num);
 	res.send(yandex_massages[number].body);
 });
 
-//дописать передачу параметров
+//отправка сообщений в инсту
+// сюда передать кому и что отправить
 app.post("/front/app/sendinst", jsonParser, function (req, res) {
     console.log("send inst");
-    sendDirectMessage.sendDM('ms.isulysha', 'literatyra18', 'imciflam', 'it works');
+
+    mongoClient.connect(function(err, client){
+
+    const db = client.db("final");
+    const collection = db.collection("users");
+    collection.findOne({login: UserLogin}, function(err, user){
+    if(err) 
+	{
+		return console.log(err);
+		resp.result = false;
+		console.log("Aвторизация не прошла");
+		    resp.result = false;
+	res.send(resp);
+	}
+	else      
+	{
+    sendDirectMessage.sendDM(user.inst_login, user.inst_password, 'imciflam', 'it works');
+    }
 });
 
 //дописать передачу параметров
@@ -488,28 +514,75 @@ let promise = Client.Session.create(device, storage, 'ms.isulysha', 'literatyra1
 //обновление
 app.get("/front/app/search", jsonParser, function (req, res) {
        console.log("обновление");
-//сдалать конект с бд
+     var resp = {};
+mongoClient.connect(function(err, client){
+
+    const db = client.db("final");
+    const collection = db.collection("users");
+    collection.findOne({login: UserLogin}, function(err, user){
+    if(err) 
+	{
+		return console.log(err);
+		resp.result = false;
+		console.log("(((((");
+		    resp.result = false;
+	res.send(resp);
+	}
+	else      
+	{
 			//и предусмотреть что у юзера есть не все почты, чтоб тут ничего не ломалось
-			Mail.Connect("isulyshka@mail.ru", 'literatyra', "mail.ru");//передавать инфу из бд
+			Mail.Connect(user.mail_login, user.mail_password, "mail.ru");//передавать инфу из бд
 			global.mail_massages = new Mail.Message();//вызываем метод вытягивания сообщений из майл
 			response.send(mail_massages);
+		}
 });
 //обновление
 app.get("/front/app/search", jsonParser, function (req, res) {
        console.log("обновление");
-//сдалать конект с бд
+     var resp = {};
+mongoClient.connect(function(err, client){
 
-    		Gmail.Connect("isulyfahretdinova@gmail.com", 'literatyra18', "gmail.com");//передавать инфу из бд
+    const db = client.db("final");
+    const collection = db.collection("users");
+    collection.findOne({login: UserLogin}, function(err, user){
+    if(err) 
+	{
+		return console.log(err);
+		resp.result = false;
+		console.log("Aвторизация не прошла");
+		    resp.result = false;
+	res.send(resp);
+	}
+	else      
+	{
+    		Gmail.Connect(user.gmail_login, user.gmail_password, "gmail.com");//передавать инфу из бд
 			global.gmail_massages = new Gmail.Message();//вызываем метод вытягивания сообщений из жмайл
 			response.send(gmail_massages);
+		}
 });
 //обновление
 app.get("/front/app/search", jsonParser, function (req, res) {
        console.log("обновление");
-//сдалать конект с бд
-			Yandex.Connect('ebobo.ebobovich@yandex.com', 'literatyra18', "yandex.com");//передавать инфу из бд
+     var resp = {};
+mongoClient.connect(function(err, client){
+
+    const db = client.db("final");
+    const collection = db.collection("users");
+    collection.findOne({login: UserLogin}, function(err, user){
+    if(err) 
+	{
+		return console.log(err);
+		resp.result = false;
+		console.log("Aвторизация не прошла");
+		    resp.result = false;
+	res.send(resp);
+	}
+	else      
+	{
+			Yandex.Connect(user.yandex_login, user.yandex_password, "yandex.com");//передавать инфу из бд
 			global.yandex_massages = new Yandex.Message();//вызываем метод вытягивания сообщений из яндекса 
 			response.send(yandex_massages);
+		}
 });
 
    //запуск фронта
