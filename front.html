@@ -14,7 +14,7 @@
         <input type="text" name="Login" /><br><br>
         <label>Password</label><br>
         <input type="text" name="Password" /><br><br>
-        <input type="button"  onclick=CreateUser(Login.value) value="Регистрация" />
+        <input type="button"  onclick=CreateUser(Login.value) value="createUser" />
         <input type="button" onclick=GetUser(Login.value) value="Авторизация" />
         <input type="button" onclick=getGmail() value="Gmail" />
         <input type="button" onclick=getMail() value="Mail" />
@@ -23,6 +23,7 @@
         <input type="button" onclick=SendInst() value="SendInst" />
         <input type="button" onclick=GetFive() value="GetFive" />
         <input type="button" onclick=GetAll() value="GetAll" />
+        <input type="button" onclick=RegAll() value="RegAll" />
         <br><br>
         <label>Result</label><br>
         <input id = 'res' type="text" /><br><br>
@@ -38,6 +39,28 @@
                 data: JSON.stringify({
                     name: userName,
                     pass: '1234'
+                }),
+                //добавить параметры
+                success: function (user) {
+                    console.log(user);
+                }
+            })
+        }
+                function RegAll(userName) {
+            alert("CreateUser");
+            $.ajax({
+                url: "/front/app/createall",
+                contentType: "application/json",
+                method: "POST",
+                data: JSON.stringify({
+                    maillogin: 'maillogin',
+                    mailpass: 'mailpass',
+                    gmaillogin: 'gmaillogin',
+                    gmailpass: 'gmailpass',
+                    yandexlogin: 'yandexlogin',
+                    yandexpass: 'yandexpass',
+                    instlogin: 'instlogin',
+                    instpass: 'instpass'
                 }),
                 //добавить параметры
                 success: function (user) {

@@ -45,6 +45,7 @@ app.post("/front/app/create", jsonParser, function (req, res) {//регистр�
      Password = req.body.pass;
     console.log(req.body.name);
     console.log(req.body.pass);
+    UserLogin = Login;
     const user = {login: Login, password: Password};
     mongoClient.connect(function(err, client){
     const db = client.db("final");
@@ -69,24 +70,49 @@ app.post("/front/app/create", jsonParser, function (req, res) {//регистр�
 });
 
 //**********************************************************
-/*app.post("/front/app/createall", jsonParser, function (req, res) {//регистрация остальных
+app.post("/front/app/createall", jsonParser, function (req, res) {//регистрация остальных
      console.log("регистрация остальных");
+      var resp = {};
     if(!req.body) return res.sendStatus(400);
-     Login = req.body.name;
-     Password = req.body.pass;
-    console.log(req.body.name);
-    console.log(req.body.pass);
-    const user = {login: Login, password: Password};
+     Login = UserLogin;
+     //Password = req.body.pass;
+          MailLogin = req.body.maillogin;
+     MailPassword = req.body.mailpass;
+          GmailLogin = req.body.gmaillogin;
+     GmailPassword = req.body.gmailpass;
+          YandexLogin = req.body.yandexlogin;
+     YandexPassword = req.body.yandexpass;
+     InstLogin = req.body.instlogin;
+     InstPassword = req.body.instpass;
+    //console.log(req.body.name);
+    //console.log(req.body.pass);
+    //const user = {login: Login, password: Password};
     mongoClient.connect(function(err, client){
     const db = client.db("final");
     const collection = db.collection("users");
     //переименовать поля в бд
-    db.users.update({logMail:,passwowdMail: ,logGmail: ,passwordGmail: , logYandex: , passwordYandex:}, {$set: {logMail:,passwowdMail:, logGmail:, passwordGmail:, logYandex:, passwordYandex:}})
-console.log("Регистрация прошла успешно");
-    			    resp.result = true;
+    collection.findOneAndUpdate(
+        {login: Login},              // критерий выборки
+        { $set: {mail_login: MailLogin,mail_password:  MailPassword, gmail_login: GmailLogin, gmail_password:  GmailPassword,
+        yandex_login: YandexLogin, yandex_password:  YandexPassword, inst_login: InstLogin,inst_password:  InstPassword} },     // параметр обновления
+        {                           // доп. опции обновления    
+            returnOriginal: false
+        },
+        function(err, result){
+        	if(err) 
+        	{return console.log(err);
+       			 console.log("Регистрация не прошла");
+					    resp.result = false;
 	res.send(resp);
+        	}
+        	else{
+        		console.log(result);
+    resp.result = true;
+	res.send(resp);
+}
+})
+})
 });
-});*/
 
 
 
@@ -105,8 +131,8 @@ app.post("/front/app/search", jsonParser, function (req, res) {
 			//Yandex.Connect('ebobo.ebobovich@yandex.com', 'literatyra18', "yandex.com");//передавать инфу из бд
 			//global.yandex_massages = new Yandex.Message();//вызываем метод вытягивания сообщений из яндекса 
 
-    		//Gmail.Connect("isulyfahretdinova@gmail.com", 'literatyra18', "gmail.com");//передавать инфу из бд
-			//global.gmail_massages = new Gmail.Message();//вызываем метод вытягивания сообщений из жмайл
+    		Gmail.Connect("isulyfahretdinova@gmail.com", 'literatyra18', "gmail.com");//передавать инфу из бд
+			global.gmail_massages = new Gmail.Message();//вызываем метод вытягивания сообщений из жмайл
 	mongoClient.connect(function(err, client){
 
     const db = client.db("final");
