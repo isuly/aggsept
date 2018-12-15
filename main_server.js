@@ -3,7 +3,11 @@ const Mail = require("./mail");//коннект с майл
 const Gmail = require("./gmail");//коннект с жмайл
 const Yandex = require("./yandex");
 const SendMail = require("./sendmail");
+var path = require('path');
 const express = require("express");
+ 
+
+//express.use(express.static(path.join(__dirname, 'public')));
 const bodyParser = require("body-parser");
 const jsonParser = express.json();
 const app = express();
@@ -18,21 +22,28 @@ var device = new Client.Device('hey');
 var storage = new Client.CookieFileStorage(__dirname + '/cookies/hey.json'); 
 const fs = require('fs');
 
+app.use(express.static('public'));
+app.use(function (req, res, next) {
 
-//global.gmail_massages;
-//const express = require("express");
-//const app = express();
+    // Website you wish to allow to connect
+    res.setHeader('Access-Control-Allow-Origin', 'null');
 
-//ПЕРЕМЕСТИЛА ВЫЗОВ В АВТОРИЗАЦИЮ
-//Gmail.Connect("isulyfahretdinova@gmail.com", 'literatyra18', "gmail.com");
-//global.gmail_massages = new Gmail.Message();//вызываем метод вытягивания сообщений из жмайл
-//это глобальная переменная, куда попало не тыкать, как попало не называть!!!
-//в нее в модуле записываем нужный массив/объект
-//она глобальная на весь сервер, и в можулях тоже видна.
-//таким же образом работаем с майлом и яндексом
-//переменные для майла и яндекса global.mail_massages и global.yandex_massages соответственно
-//сами модули лучше не трогай)
+    // Request methods you wish to allow
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
 
+    // Request headers you wish to allow
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+
+    // Set to true if you need the website to include cookies in the requests sent
+    // to the API (e.g. in case you use sessions)
+    res.setHeader('Access-Control-Allow-Credentials', true);
+
+    // Pass to next layer of middleware
+    next();
+});
+//протестить весь коннект с бд
+//написать норм комментарии
+//добавить в инст бд??????????
 
 //дальше ответы на запросы
 
@@ -51,6 +62,7 @@ app.post("/front/app/create", jsonParser, function (req, res) {//регистр�
     mongoClient.connect(function(err, client){
     const db = client.db("final");
     const collection = db.collection("users");
+
     //проверять уникальность логина 
     collection.insertOne(user, function(err, result){//
                
@@ -98,7 +110,7 @@ app.post("/front/app/createall", jsonParser, function (req, res) {//регист
         {                           // доп. опции обновления    
             returnOriginal: false
         },
-        function(err, result){
+        function(err, user){
         	if(err) 
         	{return console.log(err);
        			 console.log("Регистрация не прошла");
@@ -106,7 +118,18 @@ app.post("/front/app/createall", jsonParser, function (req, res) {//регист
 	res.send(resp);
         	}
         	else{
-        		console.log(result);
+        		console.log(user);
+
+			Mail.Connect(user.mail_login, user.mail_password, "mail.ru");//передавать инфу из бд
+			global.mail_massages = new Mail.Message();//вызываем метод вытягивания сообщений из майл
+			Yandex.Connect(user.yandex_login, user.yandex_password, "yandex.com");//передавать инфу из бд
+			global.yandex_massages = new Yandex.Message();//вызываем метод вытягивания сообщений из яндекса 
+    		Gmail.Connect(user.gmail_login, user.gmail_password, "gmail.com");//передавать инфу из бд
+			global.gmail_massages = new Gmail.Message();
+			UserLogin = Login;
+
+
+
     resp.result = true;
 	res.send(resp);
 }
@@ -137,6 +160,9 @@ app.post("/front/app/search", jsonParser, function (req, res) {
 
     const db = client.db("final");
     const collection = db.collection("users");
+     //app.locals.collection = client.db("final").collection("users");
+  
+        //const collection = req.app.locals.collection;
     collection.findOne({login: Login, password: Password}, function(err, user){
     if(err) 
 	{
@@ -178,11 +204,11 @@ app.post("/front/app/search", jsonParser, function (req, res) {
 		{
 			console.log("Aвторизация не прошла");
 			    resp.result = false;
-	res.send(resp);
+				res.send(resp);
 		}
 	}
 });
-});
+  });
 });
     //запрос на список сообщений
 app.get("/front/gmail", urlencodedParser, function (req, res) {
@@ -337,8 +363,11 @@ app.post("/front/app/sendinst", jsonParser, function (req, res) {
 	{
     sendDirectMessage.sendDM(user.inst_login, user.inst_password, 'imciflam', 'it works');
     }
+})
+    })
 });
 
+//});
 //дописать передачу параметров
  app.get("/about", function(request, response)
  {
@@ -535,7 +564,9 @@ mongoClient.connect(function(err, client){
 			global.mail_massages = new Mail.Message();//вызываем метод вытягивания сообщений из майл
 			response.send(mail_massages);
 		}
-});
+})
+        })
+   });
 //обновление
 app.get("/front/app/search", jsonParser, function (req, res) {
        console.log("обновление");
@@ -559,6 +590,8 @@ mongoClient.connect(function(err, client){
 			global.gmail_massages = new Gmail.Message();//вызываем метод вытягивания сообщений из жмайл
 			response.send(gmail_massages);
 		}
+})
+})
 });
 //обновление
 app.get("/front/app/search", jsonParser, function (req, res) {
@@ -583,15 +616,29 @@ mongoClient.connect(function(err, client){
 			global.yandex_massages = new Yandex.Message();//вызываем метод вытягивания сообщений из яндекса 
 			response.send(yandex_massages);
 		}
-});
+})
+    })
+   });
 
    //запуск фронта
-app.get("/front", urlencodedParser, function (request, response) {
-    response.sendFile(__dirname + "/front.html");
+app.get("/front/", urlencodedParser, function (request, response) {
+    response.sendFile(__dirname + "/index.html");
+    //response.sendFile(__dirname + "/firstpagejs.js");
 });
+/*app.get("/front/", urlencodedParser, function (request, response) {
+    response.sendFile(__dirname + "/front.html");
+    //response.sendFile(__dirname + "/firstpagejs.js");
+});*/
 
 app.get("/", function(request, response){
     response.send("Главная страница");
 });
+
+
+app.get('css/page1styles.css', function(req, res) {
+  res.sendFile(__dirname + "/" + "page1styles.css");
+});
+
+ 
 
 app.listen(5000);

@@ -1,0 +1,231 @@
+body{
+	margin: 0;
+	background: #fff;
+	background-attachment: fixed;
+	font-family: 'Montserrat', sans-serif;
+}
+div{
+	box-sizing: border-box;
+}
+h1{
+	font-size: 30px;
+}
+p{
+	font-size: 14px;
+}
+input{
+	outline: none;
+	border: 0;
+	background: transparent;
+	width: 100%;
+}
+button{
+	outline:none;
+  	position: relative;
+	display: block;
+	margin: 30px auto;
+	padding: 0;
+	overflow: hidden;
+	border-width: 0;
+	outline: none;
+	border-radius: 2px;
+	box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+	background-color: #009ff8;
+	color: #fff;
+	transition: background-color .3s;
+	padding: 15px 20px;
+}
+
+
+
+.container{
+	overflow: hidden;
+	background: #fff;
+	max-width: 500px;
+	width: 100%;
+	margin: 5vh auto;
+	padding: 30px 20px;
+}
+
+
+.list__add-btn{
+	height: 154px;
+	/*background: #f1f1f1;*/
+	width: 100%;
+	padding: 0 20px;
+}
+.list__add-btn p{
+	line-height: 25px;
+}
+.list__add-btn div{
+	line-height: 70px;
+	height: 70px;
+	text-align: center;
+	width: 70px;
+	background: #009ff8;
+	border-radius: 100px;
+	color: #fff;
+	display: inline-block;
+	box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+}
+
+
+
+
+.account{
+	height: 154px;
+	background: #f1f1f1;
+	width: 100%;
+	margin-top: 5px;
+	padding: 0px;
+	display: table;
+	transition: .3s ease;
+}
+.account__img{
+	height: 154px;
+	float: left;
+	line-height: 154px;
+	display: inline-block;
+	width: 54px;
+	text-align: center;
+}
+.account__data{
+	position: relative;
+	display: inline-block;
+	width: 100%;
+	padding: 0 20px;
+}
+.account__red{
+	height: 154px;
+	line-height: 154px;
+	float: right;
+	display: inline-block;
+	width: 100px;
+	text-align: center;
+	color: red;
+	cursor: pointer;
+	text-decoration: underline;
+}
+
+.list__body{
+	margin: auto;
+	min-height: 200px;
+}
+
+
+
+
+* { box-sizing:border-box; }
+.group 			  { 
+  position:relative; 
+  margin-bottom:25px;
+  margin-top: 20px;
+  width: 100%;
+}
+input 				{
+  font-size:18px;
+  padding:10px 10px 10px 5px;
+  display:block;
+  width:100%;
+  border:none;
+  border-bottom:1px solid #757575;
+}
+input:focus 		{ outline:none; }
+
+/* LABEL ======================================= */
+label 				 {
+  color:#999; 
+  font-size:18px;
+  font-weight:normal;
+  position:absolute;
+  pointer-events:none;
+  left:5px;
+  top:10px;
+  transition:0.2s ease all; 
+  -moz-transition:0.2s ease all; 
+  -webkit-transition:0.2s ease all;
+}
+
+/* active state */
+input:focus ~ label, input:valid ~ label 		{
+  top:-20px;
+  font-size:14px;
+  color:#009ff8;
+}
+
+/* BOTTOM BARS ================================= */
+.bar 	{ position:relative; display:block; width: 100%; }
+.bar:before, .bar:after 	{
+  content:'';
+  height:2px; 
+  width:0;
+  bottom:1px; 
+  position:absolute;
+  background:#009ff8; 
+  transition:0.2s ease all; 
+  -moz-transition:0.2s ease all; 
+  -webkit-transition:0.2s ease all;
+}
+.bar:before {
+  left:50%;
+}
+.bar:after {
+  right:50%; 
+}
+
+/* active state */
+input:focus ~ .bar:before, input:focus ~ .bar:after {
+  width:50%;
+}
+
+/* HIGHLIGHTER ================================== */
+.highlight {
+  position:absolute;
+  height:60%; 
+  width:100%; 
+  top:25%; 
+  left:0;
+  pointer-events:none;
+  opacity:0.5;
+}
+
+/* active state */
+input:focus ~ .highlight {
+  -webkit-animation:inputHighlighter 0.3s ease;
+  -moz-animation:inputHighlighter 0.3s ease;
+  animation:inputHighlighter 0.3s ease;
+}
+
+/* ANIMATIONS ================ */
+@-webkit-keyframes inputHighlighter {
+	from { background:#009ff8; }
+  to 	{ width:0; background:transparent; }
+}
+@-moz-keyframes inputHighlighter {
+	from { background:#009ff8; }
+  to 	{ width:0; background:transparent; }
+}
+@keyframes inputHighlighter {
+	from { background:#009ff8; }
+  to 	{ width:0; background:transparent; }
+}
+
+
+
+
+.account {
+  background: #fff;
+  border-radius: 2px;
+  display: inline-block;
+  margin: 1rem 0px;
+  position: relative;
+}
+
+.account {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+}
+
+.account:hover {
+  box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+}
