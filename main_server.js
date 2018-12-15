@@ -45,6 +45,10 @@ app.use(function (req, res, next) {
 //написать норм комментарии
 //добавить в инст бд??????????
 
+    mongoClient.connect(function(err, client){
+    const db = client.db("final");
+    global.collection = db.collection("users");
+});
 //дальше ответы на запросы
 
 //регистрация пользователя
@@ -59,9 +63,9 @@ app.post("/front/app/create", jsonParser, function (req, res) {//регистр�
     UserLogin = Login;
     const user = {login: Login, password: Password, mail_login: '' ,mail_password: '' , gmail_login:'' , gmail_password:  '' ,
         yandex_login: '' , yandex_password: '' , inst_login: '' ,inst_password: ''};
-    mongoClient.connect(function(err, client){
-    const db = client.db("final");
-    const collection = db.collection("users");
+   // mongoClient.connect(function(err, client){
+    //const db = client.db("final");
+    //const collection = db.collection("users");
 
     //проверять уникальность логина 
     collection.insertOne(user, function(err, result){//
@@ -80,7 +84,7 @@ app.post("/front/app/create", jsonParser, function (req, res) {//регистр�
 				res.send(resp);
     }
     });
-});
+//});
 });
 
 app.post("/front/app/createall", jsonParser, function (req, res) {//регистрация остальных
@@ -100,9 +104,9 @@ app.post("/front/app/createall", jsonParser, function (req, res) {//регист
     //console.log(req.body.name);
     //console.log(req.body.pass);
     //const user = {login: Login, password: Password};
-    mongoClient.connect(function(err, client){
+    /*mongoClient.connect(function(err, client){
     const db = client.db("final");
-    const collection = db.collection("users");
+    const collection = db.collection("users");*/
     collection.findOneAndUpdate(
         {login: Login},              // критерий выборки
         { $set: {mail_login: MailLogin,mail_password:  MailPassword, gmail_login: GmailLogin, gmail_password:  GmailPassword,
@@ -134,7 +138,7 @@ app.post("/front/app/createall", jsonParser, function (req, res) {//регист
 	res.send(resp);
 }
 })
-})
+//})
 });
 
 
@@ -156,10 +160,10 @@ app.post("/front/app/search", jsonParser, function (req, res) {
 
     	//	Gmail.Connect("isulyfahretdinova@gmail.com", 'literatyra18', "gmail.com");//передавать инфу из бд
 		//	global.gmail_massages = new Gmail.Message();//вызываем метод вытягивания сообщений из жмайл
-	mongoClient.connect(function(err, client){
+	/*mongoClient.connect(function(err, client){
 
     const db = client.db("final");
-    const collection = db.collection("users");
+    const collection = db.collection("users");*/
      //app.locals.collection = client.db("final").collection("users");
   
         //const collection = req.app.locals.collection;
@@ -178,22 +182,28 @@ app.post("/front/app/search", jsonParser, function (req, res) {
 		{
 		if(user.login)//и предусмотреть что у юзера есть не все почты, чтоб тут ничего не ломалось
 		{
-			
-			/*Mail.Connect(mail_login, mail_password, "mail.ru");//передавать инфу из бд
+			if(user.mail_login!='')
+			{
+			Mail.Connect('isulyshka@mail.ru', 'literatyra', "mail.ru");//передавать инфу из бд
 			global.mail_massages = new Mail.Message();//вызываем метод вытягивания сообщений из майл
+		}
+		if(user.yandex_login!='')
+			{
 			Yandex.Connect('ebobo.ebobovich@yandex.com', 'literatyra18', "yandex.com");//передавать инфу из бд
 			global.yandex_massages = new Yandex.Message();//вызываем метод вытягивания сообщений из яндекса 
-
+}
+if(user.gmail_login!='')
+			{
     		Gmail.Connect("isulyfahretdinova@gmail.com", 'literatyra18', "gmail.com");//передавать инфу из бд
-			global.gmail_massages = new Gmail.Message();*///вызываем метод вытягивания сообщений из жмайл
+			global.gmail_massages = new Gmail.Message();//вызываем метод вытягивания сообщений из жмайл
+}
 
-
-			Mail.Connect(user.mail_login, user.mail_password, "mail.ru");//передавать инфу из бд
+			/*Mail.Connect(user.mail_login, user.mail_password, "mail.ru");//передавать инфу из бд
 			global.mail_massages = new Mail.Message();//вызываем метод вытягивания сообщений из майл
 			Yandex.Connect(user.yandex_login, user.yandex_password, "yandex.com");//передавать инфу из бд
 			global.yandex_massages = new Yandex.Message();//вызываем метод вытягивания сообщений из яндекса 
     		Gmail.Connect(user.gmail_login, user.gmail_password, "gmail.com");//передавать инфу из бд
-			global.gmail_massages = new Gmail.Message();
+			global.gmail_massages = new Gmail.Message();*/
 			UserLogin = Login;
 			console.log("Aвторизация прошла успешно");
     		    resp.result = true;
@@ -208,7 +218,7 @@ app.post("/front/app/search", jsonParser, function (req, res) {
 		}
 	}
 });
-  });
+//  });
 });
     //запрос на список сообщений
 app.get("/front/gmail", urlencodedParser, function (req, res) {
@@ -264,11 +274,8 @@ var resp = {};
     //console.log(req.body.pass);
     if(!req.body) return res.sendStatus(400);
 
-	mongoClient.connect(function(err, client){
-
-    const db = client.db("final");
     //const collection = db.collection("users");
-    //collection.findOne({login: UserLogin}, function(err, user){
+    collection.findOne({login: UserLogin}, function(err, user){
     if(false) 
 	{
 		return console.log(err);
@@ -317,8 +324,8 @@ var resp = {};
 	}
 
 });
+
 });
-//});
 
 
 //Сюда передай через урл номер сообщения
@@ -346,10 +353,6 @@ const number = Number(request.params.num);
 app.post("/front/app/sendinst", jsonParser, function (req, res) {
     console.log("send inst");
 
-    mongoClient.connect(function(err, client){
-
-    const db = client.db("final");
-    const collection = db.collection("users");
     collection.findOne({login: UserLogin}, function(err, user){
     if(err) 
 	{
@@ -364,7 +367,6 @@ app.post("/front/app/sendinst", jsonParser, function (req, res) {
     sendDirectMessage.sendDM(user.inst_login, user.inst_password, 'imciflam', 'it works');
     }
 })
-    })
 });
 
 //});
@@ -664,10 +666,7 @@ let promise = Client.Session.create(device, storage, 'ms.isulysha', 'literatyra1
 app.get("/front/app/search", jsonParser, function (req, res) {
        console.log("обновление");
      var resp = {};
-mongoClient.connect(function(err, client){
 
-    const db = client.db("final");
-    const collection = db.collection("users");
     collection.findOne({login: UserLogin}, function(err, user){
     if(err) 
 	{
@@ -685,16 +684,13 @@ mongoClient.connect(function(err, client){
 			response.send(mail_massages);
 		}
 })
-        })
+        //})
    });
 //обновление
 app.get("/front/app/search", jsonParser, function (req, res) {
        console.log("обновление");
      var resp = {};
-mongoClient.connect(function(err, client){
 
-    const db = client.db("final");
-    const collection = db.collection("users");
     collection.findOne({login: UserLogin}, function(err, user){
     if(err) 
 	{
@@ -711,16 +707,13 @@ mongoClient.connect(function(err, client){
 			response.send(gmail_massages);
 		}
 })
-})
+//})
 });
 //обновление
 app.get("/front/app/search", jsonParser, function (req, res) {
        console.log("обновление");
      var resp = {};
-mongoClient.connect(function(err, client){
 
-    const db = client.db("final");
-    const collection = db.collection("users");
     collection.findOne({login: UserLogin}, function(err, user){
     if(err) 
 	{
@@ -737,7 +730,7 @@ mongoClient.connect(function(err, client){
 			response.send(yandex_massages);
 		}
 })
-    })
+    //})
    });
 
    //запуск фронта
