@@ -642,27 +642,28 @@ app.get("/front/getServises", function(request, res){
 		//resp.mail = 
     try
 		{
+
 		if(user.login)//и предусмотреть что у юзера есть не все почты, чтоб тут ничего не ломалось
 		{
+			if(user.inst_login!='')
+			{
+				resp.inst = user.inst_login;
+		}
+		else{resp.inst = false;}
+
 			if(user.mail_login!='')
 			{
 				resp.mail = user.mail_login;
-			Mail.Connect('isulyshka@mail.ru', 'literatyra', "mail.ru");//передавать инфу из бд
-			global.mail_massages = new Mail.Message();//вызываем метод вытягивания сообщений из майл
-		}
+			}
 		else{resp.mail = false;}
 		if(user.yandex_login!='')
 			{
 				resp.yandex = user.yandex_login;
-			Yandex.Connect('ebobo.ebobovich@yandex.com', 'literatyra18', "yandex.com");//передавать инфу из бд
-			global.yandex_massages = new Yandex.Message();//вызываем метод вытягивания сообщений из яндекса 
-}
+		}
 			else{resp.yandex = false;}
 			if(user.gmail_login!='')
 			{
 				resp.gmail = user.gmail_login;
-    		Gmail.Connect("isulyfahretdinova@gmail.com", 'literatyra18', "gmail.com");//передавать инфу из бд
-			global.gmail_massages = new Gmail.Message();//вызываем метод вытягивания сообщений из жмайл
 }
 else{resp.gmail = false;}
 res.send(resp);
