@@ -623,9 +623,10 @@ app.get("/front/", urlencodedParser, function (request, response) {
     //response.sendFile(__dirname + "/firstpagejs.js");
 });*/
 
-app.get("/getServises", function(request, response){
+app.get("/front/getServises", function(request, res){
+	console.log('все');
     var resp = {};
-    collection.findOne({login: UserLogin}, function(err, user){
+    collection.findOne({login: 'isulysha'}, function(err, user){
     if(err) 
 	{
 		return console.log(err);
@@ -636,6 +637,7 @@ app.get("/getServises", function(request, response){
 	}
 	else      
 	{
+		console.log(user);
 		resp.result = true;
 		//resp.mail = 
     try
@@ -655,8 +657,8 @@ app.get("/getServises", function(request, response){
 			Yandex.Connect('ebobo.ebobovich@yandex.com', 'literatyra18', "yandex.com");//передавать инфу из бд
 			global.yandex_massages = new Yandex.Message();//вызываем метод вытягивания сообщений из яндекса 
 }
-else{resp.yandex = false;}
-if(user.gmail_login!='')
+			else{resp.yandex = false;}
+			if(user.gmail_login!='')
 			{
 				resp.gmail = user.gmail_login;
     		Gmail.Connect("isulyfahretdinova@gmail.com", 'literatyra18', "gmail.com");//передавать инфу из бд
@@ -665,14 +667,15 @@ if(user.gmail_login!='')
 else{resp.gmail = false;}
 res.send(resp);
 }
+}
 catch
 {
-
 	resp.result = false;
 	res.send(resp);
-
+}
 }
 });
+    });
 
 app.get("/", function(request, response){
     response.send("Главная страница");

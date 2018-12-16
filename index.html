@@ -17,7 +17,7 @@
 				<input class="inputsize" type="text" placeholder="Логин" name = "Login">
 				<input class="inputsize" type="password" placeholder="Пароль">
 				  <!--<button class="btn">Войти</button>-->
-				  <input type="button" formaction="page2.html" value="Войти" onclick="window.location.href='http://localhost:5000/page2.html';GetUser(Login.value)" class="btn"  > <!--formaction="page2.html"-->
+				  <input type="button" formaction="page2.html" value="Войти" onclick=GetUser(Login.value) class="btn"  > <!--	formaction="page2.html"-->
 
 				<h4>Еще нет аккаунта?</h4>
 				<h4><a href="#" class = "reg-link">Регистрация</a></h4>
@@ -52,7 +52,18 @@
 <script src="decoration-js/firstpagejs.js"></script>
 <script>
  
-	function GetUser(userName) {
+ function GetUser(userName) {
+            alert("все");
+            $.ajax({
+                url: "/front/getServises",
+                type: "GET",
+                contentType: "application/json",
+                success: function (user) {
+                    console.log(user);
+                 }
+             })
+            }
+	/*function GetUser(userName) {
             alert("авторизация");
             $.ajax({
                 url: "/front/app/search",
@@ -75,7 +86,7 @@
                    //document.getElementById('res').value=user;
                 }
             })
-        }
+        }*/
         function CreateUser(userName) {
             alert("CreateUser");
             $.ajax({
