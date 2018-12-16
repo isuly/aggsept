@@ -295,25 +295,47 @@ const number = Number(request.params.num);
 
 //отправка сообщений в инсту
 // сюда передать кому и что отправить
-app.post("/front/app/sendinst", jsonParser, function (req, res) {
+app.post("/front/app/sendinst", jsonParser, function (request, response) 
+{ 
+  var login = 'ms.isulysha';
+  var password = 'literatyra18'; 
+  var conversationalistName = request.body.conversationalistName; 
+    var messageText = request.body.messageText; 
+ console.log(conversationalistName);
     console.log("send inst");
+  Client.Session.create(device, storage, login, password)
+  .then(function(session) 
+  {
+        var accountId = storage.getAccountId()//user's acc id
+        .then(function(accountId)
+          { 
+              return  accountId;
+            })
 
-    collection.findOne({login: UserLogin}, function(err, user){
-    if(err) 
-	{
-		return console.log(err);
-		resp.result = false;
-		console.log("Aвторизация не прошла");
-		    resp.result = false;
-	res.send(resp);
-	}
-	else      
-	{
-    sendDirectMessage.sendDM(user.inst_login, user.inst_password, 'imciflam', 'it works');
-    }
-})
+        .then(function(username)
+        { 
+          return Client.Account.searchForUser(session, conversationalistName) //also can fetch from threadItem!
+          .then(function(account) 
+            { 
+              //console.log (account.id); //another person's acc id
+              var conversationalistId = account.id; 
+
+              return conversationalistId; 
+            }) 
+          .catch(function(account)
+            { 
+              console.error(err.message)
+            }); 
+        })
+
+        .then(function(conversationalistId) 
+        {
+         return Client.Thread.configureText(session, conversationalistId, messageText);
+        })
+    });
+     
+    
 });
-
 //});
 //дописать передачу параметров
  app.get("/about", function(request, response)
@@ -386,106 +408,91 @@ let promise = new Client.Session.create(device, storage, 'ms.isulysha', 'literat
 });
 
 //дописать передачу параметров
- app.get("/all/:num", function(request, response)
- {
- 
-        
-var chatThread = {};
-var msgs = [];
-var flags = [];
-chatThread.msgs = msgs;
+ app.get("/all/:num", urlencodedParser, function(request, response) {
+    const number = Number(request.params.num);
+    var chatThread = {};
+    var msgs = [];
+    chatThread.msgs = msgs;
 
-let promise = Client.Session.create(device, storage, 'ms.isulysha', 'literatyra18')
-    .then(function(session) {
-        var accountId = storage.getAccountId()//user's acc id
+    let promise = Client.Session.create(device, storage, 'ms.isulysha', 'literatyra18')
+        .then(function(session) {
+            var accountId = storage.getAccountId() //user's acc id
 
 
-        .then(function(accountId)
-            { 
+            .then(function(accountId) {
                 //console.log(accountId); //user's acc id
-                return  accountId;
-            }) 
+                return accountId;
+            })
 
 
-        .then(function () { 
-            new Client.Feed.Inbox(session).get()
+            .then(function() {
+                new Client.Feed.Inbox(session).get()
 
 
-            .then(function (t) 
-                { 
+                .then(function(t) {
                     // console.log(t.length); //chats amount
-                     var threadId = t[0]._params.threadId;//номер чатика сверху
-                     return threadId;//gets threadId
-                    
+                    var threadId = t[number]._params.threadId; //номер чатика сверху
+                    return threadId; //gets threadId
+
                 })
 
 
-      .then(function (threadId, accountId)
-      { 
-        var mediaArray = [];
+                .then(function(threadId, accountId) {
+                    var mediaArray = [];
 
-        let anotherfeed = new Client.Feed.ThreadItems(session, threadId , 10)//last 20 thread items
-        anotherfeed.get()
-
-
-        .then(function(messages)
-        { 
-            if (mediaArray.length < 1 || mediaArray[mediaArray.length - 1].id !== messages[messages.length - 1]._params.id) 
-            {
-            for (let i=9; i>=0; i--)//last 10 messages, chronological order
-            {  
-                if (messages[i]!=undefined && messages[i]._params.text!=undefined)
-                {    
-                   
-                     var msgTitle = messages[i]._params.userId;
-                     var msgBody = messages[i]._params.text; 
-                     var msg = 
-                     {
-                        "msgTitle": msgTitle,
-                        "msgBody": msgBody, 
-                        "msgSide": 0
-                     }
-                     chatThread.msgs.push(msg); 
-    
-                  storage.getAccountId()
-                  .then(function(accountId)
-                  {  
-                  if (messages[i]._params.userId==accountId)
-                     {  
-                    chatThread.msgs[i].msgSide = 1; 
- 
-                     }  
-                     chatThread.msgs.push("msgSide: " + chatThread.msgs[i].msgSide); 
-                    delete chatThread.msgs[i]['msgSide'];
- 
-
-                     if (i==0)
-                    {  
-                      console.log(chatThread);
-                       response.send(chatThread);
+                    let anotherfeed = new Client.Feed.ThreadItems(session, threadId, 10) //last 20 thread items
+                    anotherfeed.get()
 
 
+                    .then(function(messages) {
+                        if (mediaArray.length < 1 || mediaArray[mediaArray.length - 1].id !== messages[messages.length - 1]._params.id) {
+                            for (let i = 9; i >= 0; i--) //last 10 messages, chronological order
+                            {
+                                if (messages[i] != undefined && messages[i]._params.text != undefined) {
+
+                                    var msgTitle = messages[i]._params.userId;
+                                    var msgBody = messages[i]._params.text;
+                                    var msg = {
+                                        "msgTitle": msgTitle,
+                                        "msgBody": msgBody,
+                                        "msgSide": 0
+                                    }
+                                    chatThread.msgs.push(msg);
+
+                                    // console.log(messages[i]._params.userId);
+                                    //console.log(messages[i]._params.text);
+                                    storage.getAccountId()
+                                        .then(function(accountId) {
+                                            if (messages[i]._params.userId == accountId && messages[i]._params.userId != "undefined") {
+
+                                                // var x = getUsernameById(messages[i]._params.userId);
+                                                console.log('message ' + i + ' was written by current user');
+                                                chatThread.msgs[i].msgSide = 1;
+
+                                            }
+                                            reversedArray = chatThread.msgs.reverse()
+                                            if (i == 0) {
+                                                var reversedThread = {};
+                                                reversedThread.reversedArray = reversedArray;
+                                                //  console.log (reversedArray);
+                                                response.send(reversedThread);
+                                            }
+                                        })
+
+                                }
 
 
+                            }
 
+                        }
 
+                    })
+                })
 
-                      //  var reversedThread = {};
-                      //  reversedThread.reversedArray = reversedArray; 
-                        // console.log(reversedArray); 
-                        // response.send(reversedThread);
-                    }
-                  }) 
-              }
-             }    
-         }
+            })
         })
-       })
-      })
-    })
+
 });
-
-
 
 //обновление
 app.get("/front/app/search", jsonParser, function (req, res) {
