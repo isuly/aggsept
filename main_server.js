@@ -386,7 +386,7 @@ let promise = new Client.Session.create(device, storage, 'ms.isulysha', 'literat
 });
 
 //дописать передачу параметров
- app.get("/all", function(request, response)
+ app.get("/all/:num", function(request, response)
  {
  
         
