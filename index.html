@@ -15,9 +15,9 @@
 				<h2>Aggsept</h2>
 				<h3>Не пропустите главное.</h3>
 				<input class="inputsize" type="text" placeholder="Логин" name = "Login">
-				<input class="inputsize" type="password" placeholder="Пароль">
+				<input class="inputsize" type="password" placeholder="Пароль" name = "Passs">
 				  <!--<button class="btn">Войти</button>-->
-				  <input type="button" formaction="page2.html" value="Войти" onclick="window.location.href='http://localhost:5000/page2.html';GetUser(Login.value)" class="btn"  > <!--	formaction="page2.html"-->
+				  <input type="button" formaction="page2.html" value="Войти" onclick="window.location.href='http://localhost:5000/page2';GetUser(Login.value, Passs.value)" class="btn"  > <!--	formaction="page2.html"-->
 
 				<h4>Еще нет аккаунта?</h4>
 				<h4><a href="#" class = "reg-link">Регистрация</a></h4>
@@ -28,9 +28,9 @@
 				<h2>Aggsept</h2>
 				<h3>Не пропустите главное.</h3>
 				<input class="inputsize" type="text" placeholder="Логин" name = "Loginn">
-				<input class="inputsize" type="password" placeholder="Пароль">
+				<input class="inputsize" type="password" placeholder="Пароль" name = "Pass">
 				<!--<button class="btn">Зарегистрироваться</button>-->
-				<input type="button" value="Зарегистрироваться" onclick="window.location.href='http://localhost:5000/page2.html';CreateUser(Loginn.value)" class="btn"><!--formaction="page2.html"-->
+				<input type="button" value="Зарегистрироваться" onclick="window.location.href='http://localhost:5000/page2.html';CreateUser(Loginn.value, Pass.value)" class="btn"><!--formaction="page2.html"-->
 				<h4>Уже есть аккаунт?</h4>
 				<h4><a href="#" class = "signin-link">Вход</a></h4>
  			</form>
@@ -52,7 +52,7 @@
 <script src="decoration-js/firstpagejs.js"></script>
 <script>
  
-	function GetUser(userName) {
+	function GetUser(userName, pass) {
             alert("авторизация");
             $.ajax({
                 url: "/front/app/search",
@@ -60,7 +60,7 @@
                 method: "POST",
                 data: JSON.stringify({
                     name: userName,
-                    pass: '1234'
+                    pass: pass
                 }),
                 error: function (user) {
                     console.log(user);
@@ -76,7 +76,7 @@
                 }
             })
         }
-        function CreateUser(userName) {
+        function CreateUser(userName, pass) {
             alert("CreateUser");
             $.ajax({
                 url: "/front/app/create",
@@ -84,7 +84,7 @@
                 method: "POST",
                 data: JSON.stringify({
                     name: userName,
-                    pass: '1234'
+                    pass: pass
                 }),
                 //добавить параметры
                 success: function (user) {

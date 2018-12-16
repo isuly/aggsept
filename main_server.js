@@ -22,6 +22,7 @@ var device = new Client.Device('hey');
 var storage = new Client.CookieFileStorage(__dirname + '/cookies/hey.json'); 
 const fs = require('fs');
 
+
 app.use(express.static('public'));
 app.use(function (req, res, next) {
 
@@ -108,7 +109,7 @@ app.post("/front/app/createall", jsonParser, function (req, res) {//регист
     const db = client.db("final");
     const collection = db.collection("users");*/
     collection.findOneAndUpdate(
-        {login: Login},              // критерий выборки
+        {login: UserLogin},              // критерий выборки
         { $set: {mail_login: MailLogin,mail_password:  MailPassword, gmail_login: GmailLogin, gmail_password:  GmailPassword,
         yandex_login: YandexLogin, yandex_password:  YandexPassword, inst_login: InstLogin,inst_password:  InstPassword} },     // параметр обновления
         {                           // доп. опции обновления    
@@ -124,13 +125,13 @@ app.post("/front/app/createall", jsonParser, function (req, res) {//регист
         	else{
         		console.log(user);
 
-			Mail.Connect(user.mail_login, user.mail_password, "mail.ru");//передавать инфу из бд
+			/*Mail.Connect(user.mail_login, user.mail_password, "mail.ru");//передавать инфу из бд
 			global.mail_massages = new Mail.Message();//вызываем метод вытягивания сообщений из майл
 			Yandex.Connect(user.yandex_login, user.yandex_password, "yandex.com");//передавать инфу из бд
 			global.yandex_massages = new Yandex.Message();//вызываем метод вытягивания сообщений из яндекса 
     		Gmail.Connect(user.gmail_login, user.gmail_password, "gmail.com");//передавать инфу из бд
 			global.gmail_massages = new Gmail.Message();
-			UserLogin = Login;
+			UserLogin = Login;*/
 
 
 
@@ -239,6 +240,13 @@ app.get("/front/mail", urlencodedParser, function (req, res) {
 	console.log(mail_massages[i].head);
 	console.log(mail_massages[i].body);
 }*/
+		
+
+			for (var i=0; i<mail_massages.length; i++)
+	{
+	console.log(mail_massages[i].head);
+	console.log(mail_massages[i].body);
+}
 	res.send(mail_massages);
 	//SendMail.MailSend();
 });
@@ -616,6 +624,10 @@ app.get("/front/app/search", jsonParser, function (req, res) {
    //запуск фронта
 app.get("/front/", urlencodedParser, function (request, response) {
     response.sendFile(__dirname + "/index.html");
+    //response.sendFile(__dirname + "/firstpagejs.js");
+});
+app.get("/page2", urlencodedParser, function (request, response) {
+    response.sendFile(__dirname + "/public/page2.html");
     //response.sendFile(__dirname + "/firstpagejs.js");
 });
 /*app.get("/front/", urlencodedParser, function (request, response) {

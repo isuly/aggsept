@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>hi</title>
+	<title>Aggsept</title>
 	<link rel="stylesheet" href="css/main.css">
 	<link rel="stylesheet" href="css/vfim.css">
 	<link 
@@ -71,7 +71,7 @@
 						</div>
 					</div>
 				</div>
-				<button>Продолжить</button>
+				<button onclick=Registration() >Продолжить</button>
 			</form>
 		</div>
 	</div>	
@@ -137,6 +137,39 @@
 		$(document).on('click', '.account__red', function () {
 			$(this).parent().remove();
 		});
+
+
+		function Registration() {
+            alert("reg");
+
+            $.ajax({
+                url: "/front/app/createall",
+                contentType: "application/json",
+                method: "POST",
+                data: JSON.stringify({
+					maillogin: 'maillogin',
+                    mailpass: 'mailpass',
+                    gmaillogin: 'gmaillogin',
+                    gmailpass: 'gmailpass',
+                    yandexlogin: 'yandexlogin',
+                    yandexpass: 'yandexpass',
+                    instlogin: 'instlogin',
+                    instpass: 'instpass'
+                }),
+                error: function (user) {
+                    console.log(user);
+                    alert('не ы')
+                   //document.getElementById('res').value=user;
+                },
+                success: function (user) {
+                    console.log(user);
+                    alert('ы')
+                    //window.location.replace("2/post2.html");
+
+                   //document.getElementById('res').value=user;
+                }
+            })
+        }
 	</script>
 </body>
 </html>
