@@ -42,33 +42,25 @@ app.use(function (req, res, next) {
     // Pass to next layer of middleware
     next();
 });
-//протестить весь коннект с бд
-//написать норм комментарии
-//добавить в инст бд??????????
+
 
     mongoClient.connect(function(err, client){
     const db = client.db("final");
     global.collection = db.collection("users");
 });
-//дальше ответы на запросы
+
 
 //регистрация пользователя
 app.post("/front/app/create", jsonParser, function (req, res) {//регистрация только логина и пароля
      console.log("регистрация");
      var resp = {};
     if(!req.body) return res.sendStatus(400);
-     Login = req.body.name;
-     Password = req.body.pass;
-    console.log(req.body.name);
-    console.log(req.body.pass);
+    Login = req.body.name;
+    Password = req.body.pass;
     UserLogin = Login;
     const user = {login: Login, password: Password, mail_login: '' ,mail_password: '' , gmail_login:'' , gmail_password:  '' ,
         yandex_login: '' , yandex_password: '' , inst_login: '' ,inst_password: ''};
-   // mongoClient.connect(function(err, client){
-    //const db = client.db("final");
-    //const collection = db.collection("users");
-
-    //проверять уникальность логина 
+ 
     collection.insertOne(user, function(err, result){//
                
         if(err) 
@@ -85,7 +77,6 @@ app.post("/front/app/create", jsonParser, function (req, res) {//регистр�
 				res.send(resp);
     }
     });
-//});
 });
 
 app.post("/front/app/createall", jsonParser, function (req, res) {//регистрация остальных
@@ -102,12 +93,7 @@ app.post("/front/app/createall", jsonParser, function (req, res) {//регист
      YandexPassword = req.body.yandexpass;
      InstLogin = req.body.instlogin;
      InstPassword = req.body.instpass;
-    //console.log(req.body.name);
-    //console.log(req.body.pass);
-    //const user = {login: Login, password: Password};
-    /*mongoClient.connect(function(err, client){
-    const db = client.db("final");
-    const collection = db.collection("users");*/
+
     collection.findOneAndUpdate(
         {login: UserLogin},              // критерий выборки
         { $set: {mail_login: MailLogin,mail_password:  MailPassword, gmail_login: GmailLogin, gmail_password:  GmailPassword,
@@ -118,13 +104,13 @@ app.post("/front/app/createall", jsonParser, function (req, res) {//регист
         function(err, user){
         	if(err) 
         	{return console.log(err);
-       			 console.log("Регистрация не прошла");
-					    resp.result = false;
-	res.send(resp);
+       			console.log("Регистрация не прошла");
+				resp.result = false;
+				res.send(resp);
         	}
         	else{
         		console.log(user);
-
+   
 			/*Mail.Connect(user.mail_login, user.mail_password, "mail.ru");//передавать инфу из бд
 			global.mail_massages = new Mail.Message();//вызываем метод вытягивания сообщений из майл
 			Yandex.Connect(user.yandex_login, user.yandex_password, "yandex.com");//передавать инфу из бд
@@ -132,8 +118,6 @@ app.post("/front/app/createall", jsonParser, function (req, res) {//регист
     		Gmail.Connect(user.gmail_login, user.gmail_password, "gmail.com");//передавать инфу из бд
 			global.gmail_massages = new Gmail.Message();
 			UserLogin = Login;*/
-
-
 
     resp.result = true;
 	res.send(resp);
@@ -154,62 +138,43 @@ app.post("/front/app/search", jsonParser, function (req, res) {
     var resp = {};
     if(!req.body) return res.sendStatus(400);
 
-			//Mail.Connect("isulyshka@mail.ru", 'literatyra', "mail.ru");//передавать инфу из бд
-			//global.mail_massages = new Mail.Message();//вызываем метод вытягивания сообщений из майл
-			//Yandex.Connect('ebobo.ebobovich@yandex.com', 'literatyra18', "yandex.com");//передавать инфу из бд
-			//global.yandex_massages = new Yandex.Message();//вызываем метод вытягивания сообщений из яндекса 
-
-    	//	Gmail.Connect("isulyfahretdinova@gmail.com", 'literatyra18', "gmail.com");//передавать инфу из бд
-		//	global.gmail_massages = new Gmail.Message();//вызываем метод вытягивания сообщений из жмайл
-	/*mongoClient.connect(function(err, client){
-
-    const db = client.db("final");
-    const collection = db.collection("users");*/
-     //app.locals.collection = client.db("final").collection("users");
-  
-        //const collection = req.app.locals.collection;
     collection.findOne({login: Login, password: Password}, function(err, user){
     if(err) 
 	{
 		return console.log(err);
 		resp.result = false;
 		console.log("Aвторизация не прошла");
-		    resp.result = false;
-	res.send(resp);
+		resp.result = false;
+		res.send(resp);
 	}
 	else      
 	{
 		try
 		{
-		if(user.login)//и предусмотреть что у юзера есть не все почты, чтоб тут ничего не ломалось
-		{
-			if(user.mail_login!='')
-			{
-			Mail.Connect('isulyshka@mail.ru', 'literatyra', "mail.ru");//передавать инфу из бд
-			global.mail_massages = new Mail.Message();//вызываем метод вытягивания сообщений из майл
-		}
-		if(user.yandex_login!='')
-			{
-			Yandex.Connect('ebobo.ebobovich@yandex.com', 'literatyra18', "yandex.com");//передавать инфу из бд
-			global.yandex_massages = new Yandex.Message();//вызываем метод вытягивания сообщений из яндекса 
-}
-if(user.gmail_login!='')
-			{
-    		Gmail.Connect("isulyfahretdinova@gmail.com", 'literatyra18', "gmail.com");//передавать инфу из бд
-			global.gmail_massages = new Gmail.Message();//вызываем метод вытягивания сообщений из жмайл
-}
+    	Gmail.Connect("isulyfahretdinova@gmail.com", 'literatyra18', "gmail.com");
+		global.gmail_massages = new Gmail.Message();
 
-			/*Mail.Connect(user.mail_login, user.mail_password, "mail.ru");//передавать инфу из бд
-			global.mail_massages = new Mail.Message();//вызываем метод вытягивания сообщений из майл
-			Yandex.Connect(user.yandex_login, user.yandex_password, "yandex.com");//передавать инфу из бд
-			global.yandex_massages = new Yandex.Message();//вызываем метод вытягивания сообщений из яндекса 
-    		Gmail.Connect(user.gmail_login, user.gmail_password, "gmail.com");//передавать инфу из бд
-			global.gmail_massages = new Gmail.Message();*/
+/*			if(user.mail_login!='')
+			{
+			Mail.Connect(user.mail_login, user.mail_password, "mail.ru");
+			global.mail_massages = new Mail.Message();
+			}
+			if(user.yandex_login!='')
+			{
+			Yandex.Connect(user.yandex_login, user.yandex_password, "yandex.com");
+			global.yandex_massages = new Yandex.Message();
+			}
+			if(user.gmail_login!='')
+			{
+    		Gmail.Connect(user.gmail_login, user.gmail_password, "gmail.com");
+			global.gmail_massages = new Gmail.Message();
+			}
+*/
 			UserLogin = Login;
 			console.log("Aвторизация прошла успешно");
-    		    resp.result = true;
-	res.send(resp);
-		}
+    		resp.result = true;
+			res.send(resp);
+		//}
 		}
 		catch
 		{
@@ -223,42 +188,14 @@ if(user.gmail_login!='')
 });
     //запрос на список сообщений
 app.get("/front/gmail", urlencodedParser, function (req, res) {
-	
-	/*for (var i=0; i<gmail_massages.length; i++)
-	{
-	console.log(gmail_massages[i].head);
-	console.log(gmail_massages[i].body);
-}*/
 	res.send(gmail_massages);
-	//SendMail.MailSend();
 });
 
 app.get("/front/mail", urlencodedParser, function (req, res) {
-	
-	/*for (var i=0; i<mail_massages.length; i++)
-	{
-	console.log(mail_massages[i].head);
-	console.log(mail_massages[i].body);
-}*/
-		
-
-			for (var i=0; i<mail_massages.length; i++)
-	{
-	console.log(mail_massages[i].head);
-	console.log(mail_massages[i].body);
-}
 	res.send(mail_massages);
-	//SendMail.MailSend();
 });
-app.get("/front/gmail", urlencodedParser, function (req, res) {
-	
-	/*for (var i=0; i<yandex_massages.length; i++)
-	{
-	console.log(yandex_massages[i].head);
-	console.log(yandex_massages[i].body);
-}*/
+app.get("/front/yandex", urlencodedParser, function (req, res) {
 	res.send(yandex_massages);
-	//SendMail.MailSend();
 });
 
 
@@ -559,21 +496,26 @@ app.get("/front/app/search", jsonParser, function (req, res) {
     if(err) 
 	{
 		return console.log(err);
-		resp.result = false;
 		console.log("(((((");
-		    resp.result = false;
-	res.send(resp);
+		resp.result = false;
+		res.send(resp);
 	}
 	else      
 	{
-			//и предусмотреть что у юзера есть не все почты, чтоб тут ничего не ломалось
+		try{
 			Mail.Connect(user.mail_login, user.mail_password, "mail.ru");//передавать инфу из бд
 			global.mail_massages = new Mail.Message();//вызываем метод вытягивания сообщений из майл
 			response.send(mail_massages);
 		}
+		catch
+		{
+		console.log("(((((");
+		resp.result = false;
+		res.send(resp);
+		}
+	}
 })
-        //})
-   });
+});
 //обновление
 app.get("/front/app/search", jsonParser, function (req, res) {
        console.log("обновление");
@@ -590,9 +532,18 @@ app.get("/front/app/search", jsonParser, function (req, res) {
 	}
 	else      
 	{
+		try
+			{
     		Gmail.Connect(user.gmail_login, user.gmail_password, "gmail.com");//передавать инфу из бд
 			global.gmail_massages = new Gmail.Message();//вызываем метод вытягивания сообщений из жмайл
 			response.send(gmail_massages);
+			}
+		catch
+		{
+		console.log("(((((");
+		resp.result = false;
+		res.send(resp);
+		}
 		}
 })
 //})
@@ -613,12 +564,19 @@ app.get("/front/app/search", jsonParser, function (req, res) {
 	}
 	else      
 	{
+		try{
 			Yandex.Connect(user.yandex_login, user.yandex_password, "yandex.com");//передавать инфу из бд
 			global.yandex_massages = new Yandex.Message();//вызываем метод вытягивания сообщений из яндекса 
 			response.send(yandex_massages);
+			}
+		catch
+		{
+		console.log("(((((");
+		resp.result = false;
+		res.send(resp);
+		}
 		}
 })
-    //})
    });
 
    //запуск фронта
@@ -629,6 +587,28 @@ app.get("/front/", urlencodedParser, function (request, response) {
 app.get("/page2", urlencodedParser, function (request, response) {
     response.sendFile(__dirname + "/public/page2.html");
     //response.sendFile(__dirname + "/firstpagejs.js");
+});
+app.get("/page3", urlencodedParser, function (request, response) {
+    response.sendFile(__dirname + "/public/page3.html");
+    //response.sendFile(__dirname + "/firstpagejs.js");
+});
+app.get("/insta", urlencodedParser, function(request, response) {
+    response.sendFile(__dirname + "/insta.html");
+});
+
+app.get("/mail", urlencodedParser, function(request, response) {
+    response.sendFile(__dirname + "/mail.html");
+});
+
+app.get("/gmail", urlencodedParser, function(request, response) {
+    response.sendFile(__dirname + "/gmail.html");
+});
+
+app.get("/yandex", urlencodedParser, function(request, response) {
+    response.sendFile(__dirname + "/yandex.html");
+});
+app.get("/vk", urlencodedParser, function(request, response) {
+    response.sendFile(__dirname + "/vk.html");
 });
 /*app.get("/front/", urlencodedParser, function (request, response) {
     response.sendFile(__dirname + "/front.html");

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<meta charset="UTF-8">
+	<title>deadchat</title>
+	<link rel="stylesheet" href="css/jquery.scrollbar_a.css">
+	<link rel="stylesheet" href="css/main_a.css">
+	<link rel="stylesheet" href="css/vfim_a.css">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="viewport" content="user-scalable=no, width=device-width"> 
+	<script
+		src="https://code.jquery.com/jquery-3.3.1.min.js"
+		integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+		crossorigin="anonymous"></script>
+	<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700&amp;subset=cyrillic" rel="stylesheet"> 
+</head>
+<body>
+	<div class="container">
+		<div class="header">
+			<div class="header__logo">AGGSEPT</div>
+			<div class="header__burger"><i class="side__icon icon-menu"></i></div>
+			<div class="header__center"></div>
+			<div class="header__right">ВЫХОД НАСТРОЙКИ</div>
+		</div>
+
+
+		<div class="side">
+			<div class="side__icons">
+				<a href="insta.html"><div class="icon inst"><i class="side__icon icon-instagram"></i></div></a>
+				<a href="vk.html"><div class="icon"><i class="side__icon icon-vkontakte"></i></div></a>
+				<div class="icon side__active"><i class="side__icon icon-mail"></i></div>
+			</div>
+
+			<div class="side__contacts">
+
+				<div class="new contact">
+					<img src="img/add.png" alt="">
+					<div class="new__mail">
+						<p>Новое сообщение</p>
+					</div>
+				</div>
+
+
+			</div>
+			<div class="side__search">
+				<form action="">
+					<input type="text" placeholder="Поиск">
+				</form>
+			</div>
+		</div>
+
+		<div class="send">
+			<div>
+				<form action="">
+					<!-- <input type="text" placeholder="Напишите сообщение..."> -->
+					<!-- <button class="sendbtn">ОТВЕТИТЬ</button> -->
+				</form>
+			</div>
+		</div>
+
+		<div class="chat">
+			<div class="mails">
+				<div>
+
+
+					<!-- <div class="mail">
+						<div class="mail__in">
+							<div class="mail__alt">
+								Logs and Log Alerts<br>Heroku communications@heroku.com<br>21:00 15.08.18
+							</div>
+							<div class="mail__body">
+
+							</div>
+						</div>
+					</div> -->
+
+
+				</div>
+			</div>
+			<div class="write hidden">
+				<div>
+					<form onsubmit="sendMessage($('.to').val(), $('.title').val(), $('.text').val()); return false" id="form">
+						<p>Кому: <input type="text" name="to" class="to"></p>
+						<p>Тема: <input type="text" name="title" class="title"></p>
+						<textarea class="text"></textarea>
+						<button>ОТПРАВИТЬ</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		setTimeout(function () {
+			$('body, html').scrollTop($(document).height());
+		}, 1000);
+
+
+		var myId = 519247984;
+		var my, companion;
+		var active, chatsData;
+
+		$(".toSend").keyup(function(event){
+		    if(event.keyCode == 13){
+		        sendMessage($('.to').val(), $('.title').value(), $('.text').value());
+		    }
+		});
+
+		$(document).on('click', '.contact', function () {
+			if (active == undefined){
+				$(this).addClass('contact__active');
+				active = this;
+			} else if (this != active){
+				$(this).addClass('contact__active');
+				$(active).removeClass('contact__active');
+				active = this;
+			}
+			if ( this == active ){
+				if ($(this).attr("class") == "new contact contact__active"){
+					$('.mails').addClass('hidden');
+					$('.write').removeClass('hidden');
+				}
+				else{
+					$('.write').addClass('hidden');
+					$('.mails').removeClass('hidden');
+					companion = $(this).attr("id");
+					console.log(companion);
+					clear();
+					getHistory(companion);
+					toBottom();
+				}
+			}
+
+		});
+
+		// getInfoAbout("76141337");136742294
+		getChats();
+
+
+		function clear() {
+			$('.mail').remove();
+		}
+		function toBottom() {
+			setTimeout(function () {
+				$('body, html').scrollTop($(document).height());
+			}, 100);
+		}
+		function whoAmI() {
+			
+		}
+		function iam(result){ 
+			my = result.response[0];
+			console.log(my);
+			return 0;
+		}
+		function sendMessage(to, title, text) {  // осталось только отправить , это все приходит
+			$('form input[type="text"], form input[type="password"], form textarea').val('');
+			console.log(to, title, text);
+			$.ajax({
+				url: 'front/app/send',
+				method: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify({
+					to: to,
+					subject: title,
+					host: 'yandex.ru',
+					text: text
+				}),
+			});
+		}
+		function message(result){
+			var draw = result.response[0];
+			clear(); // start_message_id хоччу 
+			getHistory(companion);
+			toBottom();
+			return 0;
+		} 
+		function getHistory(id) {
+			messages(chatsData, id);
+		}
+		function messages(result, i){
+			var parent = document.getElementsByClassName('mails')[0];
+			var par = parent.getElementsByTagName('div')[0];
+			var message = document.createElement('div');
+			message.className = "mail";
+			var messageFrom = document.createElement('div');
+			messageFrom.className = "mail__in";
+			var messageBody = document.createElement('div');
+			messageBody.className = "mail__body";
+			messageBody.innerHTML = result[i].body;
+			// console.log(result.response[i].body);
+			var messageAlt = document.createElement('div');
+			messageAlt.className = "mail__alt";
+			messageAlt.innerHTML =  '<h2>' + result[i].subject +'</h2>'+ result[i].name +'<br>'+ result[i].from +'<br>'+ result[i].date;
+			par.appendChild(message);
+			message.appendChild(messageFrom);
+			messageFrom.appendChild(messageAlt);
+			messageFrom.appendChild(messageBody);
+			return 0;
+		}
+		function getChats() {
+			$.ajax({
+            	url: "/front/yandex",
+                contentType: "application/json",
+                success: function (data) {
+                	chatsData = data;
+                	console.log(data);
+                    chats(data);
+                }
+            });
+		}
+		function chats(result){
+			var par = document.getElementsByClassName('side__contacts')[0];
+			for (var i = 0; i < result.length; i++) {
+				var contact = document.createElement('div');
+				contact.className = "contact";
+				contact.id = i;
+				var img = document.createElement('img');
+				var who = document.createElement('div');
+				who.className = "contact__who";
+				var time = document.createElement('div');
+				time.className = "contact__time";
+				img.src = 'img/no.png';
+				who.innerHTML = "<p>"+ result[i].name +"</p><p>"+ result[i].subject +"</p>";
+				par.appendChild(contact);
+				contact.appendChild(img);
+				contact.appendChild(who);
+				contact.appendChild(time);
+			}
+			return 0;
+		}
+		function convertDate(UNIX_timestamp){
+			var a = new Date(UNIX_timestamp * 1000);
+			var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+			var year = a.getFullYear();
+			var month = months[a.getMonth()];
+			var date = a.getDate();
+			var hour = a.getHours();
+			var min = a.getMinutes();
+			var sec = a.getSeconds();
+			var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
+			return time;
+		}
+	</script>
+</body>
+</html>
+</html>

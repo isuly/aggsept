@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>Aggsept</title>
-	<link rel="stylesheet" href="css/main2.css">
-	<link rel="stylesheet" href="css/vfim2.css">
+	<title>hi</title>
+	<link rel="stylesheet" href="css/main.css">
+	<link rel="stylesheet" href="css/vfim.css">
 	<link 
 		href="https://fonts.googleapis.com/css?family=Montserrat" 
 		rel="stylesheet">
@@ -20,28 +20,21 @@
 		crossorigin="anonymous"></script>
 </head>
 <body>
-
-	<div class="container"> 
+ 
 		 <h2>Aggsept</h2>
-		<div class="list">
-			<form>
+		<div class="list"> 
 				<div class="list__body">
+					<div class = "helper"><p>Для того, чтобы приступить к работе, выберите элемент. </p> </div>
 					<div class="list__add">
-						<div class="list__add-btn">
-							 <p>Добавить аккаунт:<br></p>
+						<div class="list__add-btn"> 
 
 
-								<div class="addEmail"><img src = "email.png" width = "50px" height = "50px"></div> 
-
-
-								<div class="addVk"><img src = "vk.png" width = "50px" height = "50px"></div> 
-
-
-								<div class="addInst"><img src = "insta.png" width = "50px" height = "50px"></div>
-
-
-
-							 
+								<div class="addEmail"><img src = "gm.png" width = "50px" height = "50px" onclick="window.location.href='http://localhost:5000/gmail';GetGmail()" ></div> 
+								<div class="addVk"><img src = "vk.png" width = "50px" height = "50px" onclick="window.location.href='http://localhost:5000/vk' "></div> 
+								<div class="addEmail"><img src = "mail.png" width = "50px" height = "50px" onclick=getMail() ></div> 
+								<div class="addInst"><img src = "insta.png" width = "50px" height = "50px" onclick=getInst()></div> 
+								<div class="addEmail"><img src = "ya.png" width = "50px" height = "50px" onclick=getYandex()></div> 
+ 
 
 
 						</div>
@@ -71,12 +64,13 @@
 						</div>
 					</div>
 				</div>
-				<button onclick=Registration() >Продолжить</button>
-			</form>
-		</div>
-	</div>	
+				 
+		</div> 
 	<script>
 		$(document).on('click', '.addEmail', function () {
+
+
+			/*
 			var par = document.getElementsByClassName('list__accounts')[0];
 			console.log('lllll');
 			var account = document.createElement('div');
@@ -93,10 +87,10 @@
 			par.insertBefore(account, par.firstChild);
 			account.appendChild(accountImg);
 			account.appendChild(accountData);
-			account.appendChild(accountRed);
+			account.appendChild(accountRed);*/
 		});
 		$(document).on('click', '.addVk', function () {
-			var par = document.getElementsByClassName('list__accounts')[0];
+			/*var par = document.getElementsByClassName('list__accounts')[0];
 			console.log('lllll');
 			var account = document.createElement('div');
 			account.className = "account";
@@ -113,10 +107,10 @@
 			par.insertBefore(account, par.firstChild);
 			account.appendChild(accountImg);
 			account.appendChild(accountData);
-			account.appendChild(accountRed);
+			account.appendChild(accountRed);*/
 		});
 		$(document).one('click', '.addInst', function () {
-			var par = document.getElementsByClassName('list__accounts')[0];
+			/*var par = document.getElementsByClassName('list__accounts')[0];
 			console.log('lllll');
 			var account = document.createElement('div');
 			account.className = "account";
@@ -132,44 +126,53 @@
 			par.insertBefore(account, par.firstChild);
 			account.appendChild(accountImg);
 			account.appendChild(accountData);
-			account.appendChild(accountRed);
+			account.appendChild(accountRed);*/
 		});
-		$(document).on('click', '.account__red', function () {
-			$(this).parent().remove();
-		});
-
-
-		function Registration() {
-            alert("reg");
-
+		 
+		  function getGmail() {
+            alert("gmail");
             $.ajax({
-                url: "/front/app/createall",
+                url: "/front/gmail",
+                type: "GET",
                 contentType: "application/json",
-                method: "POST",
-                data: JSON.stringify({
-					maillogin: 'maillogin',
-                    mailpass: 'mailpass',
-                    gmaillogin: 'gmaillogin',
-                    gmailpass: 'gmailpass',
-                    yandexlogin: 'yandexlogin',
-                    yandexpass: 'yandexpass',
-                    instlogin: 'instlogin',
-                    instpass: 'instpass'
-                }),
-                error: function (user) {
-                    console.log(user);
-                    alert('не ы')
-                   //document.getElementById('res').value=user;
-                },
                 success: function (user) {
                     console.log(user);
-                    alert('ы')
-                    //window.location.replace("2/post2.html");
-
-                   //document.getElementById('res').value=user;
-                }
-            })
-        }
+                 }
+             })
+            }
+            function getMail() {
+            alert("mail");
+            $.ajax({
+                url: "/front/mail",
+                type: "GET",
+                contentType: "application/json",
+                success: function (user) {
+                    console.log(user);
+                 }
+             })
+            }
+            function getYandex() {
+            alert("yandex");
+            $.ajax({
+                url: "/front/yandex",
+                type: "GET",
+                contentType: "application/json",
+                success: function (user) {
+                    console.log(user);
+                 }
+             })
+            }
+            function getInst() {
+            alert("Inst");
+            $.ajax({
+                url: "/about",
+                type: "GET",
+                contentType: "application/json",
+                success: function (user) {
+                    console.log(user);
+                 }
+             })
+            }
 	</script>
 </body>
 </html>
