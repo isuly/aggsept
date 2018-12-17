@@ -60,6 +60,7 @@
 	</div>
 
 	<script>
+var count=0;
 		setTimeout(function () {
 			$('body, html').scrollTop($(document).height());
 		}, 1000);
@@ -136,7 +137,7 @@
              request.addEventListener("load", function () {
                  console.log(request.response);   // смотрим ответ сервера
              });
-             request.send(user);
+             //request.send(user);
 			clear();
 			getHistory(companion);
 		}
@@ -163,7 +164,34 @@
 			var parent = document.getElementsByClassName('messages')[0];
 			var par = parent.getElementsByTagName('div')[0];
 			var len = result.reversedArray.length;
-			for (var i = len-1; i > -1; i--) {
+			if(len==10&&count==0)
+			{
+count++;
+							for (var i = 0; i < len; i++) {
+				var message = document.createElement('div');
+				message.className = "message";
+				var messageFrom = document.createElement('div');
+				if (result.reversedArray[i].msgSide == 1) {
+					messageFrom.className = "message__in";
+				} else {
+					messageFrom.className = "message__out";
+				}
+				var messageBody = document.createElement('div');
+				messageBody.className = "message__body";
+				messageBody.innerHTML = result.reversedArray[i].msgBody;
+				// console.log(result.response[i].body);
+				// var messageAlt = document.createElement('div');
+				// messageAlt.className = "message__alt";
+				// messageAlt.innerHTML = convertDate(result.response[i].date);
+				par.appendChild(message);
+				message.appendChild(messageFrom);
+				messageFrom.appendChild(messageBody);
+				// messageFrom.appendChild(messageAlt);
+
+			}
+			}
+			else{
+			for (var i = 0; i < len; i++) {
 				var message = document.createElement('div');
 				message.className = "message";
 				var messageFrom = document.createElement('div');
@@ -185,6 +213,7 @@
 				// messageFrom.appendChild(messageAlt);
 
 			}
+		}
 			return 0;
 		}
 		function getChats() {
@@ -193,6 +222,7 @@
                 contentType: "application/json",
                 success: function (data) {
                 	chatsData = data;
+                	console.log(data);
                     chats(data);
                 }
             });

@@ -394,11 +394,11 @@ body{
 	text-align: left;
 }
 .mail__in .mail__body{
-	background: #f3f3f3;
+	background: #ffffff;
 	border-radius: 20px 20px 20px 20px;
 }
 .mail__out .mail__body{
-	background: #caeafc;
+	background: #ffffff;
 	border-radius: 20px 20px 0 20px;
 }
 .mails{

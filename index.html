@@ -53,7 +53,7 @@
 <script>
  
 	function GetUser(userName, pass) {
-            alert("авторизация");
+            //alert("авторизация");
             $.ajax({
                 url: "/front/app/search",
                 contentType: "application/json",
@@ -63,13 +63,13 @@
                     pass: pass
                 }),
                 error: function (user) {
-                    console.log(user);
-                    alert('75315685')
+                    //console.log(user);
+                    //alert('75315685')
                    //document.getElementById('res').value=user;
                 },
                 success: function (user) {
                     console.log(user);
-                    alert('ы')
+                    //alert('ы')
                     //window.location.replace("2/post2.html");
 
                    //document.getElementById('res').value=user;
@@ -77,7 +77,7 @@
             })
         }
         function CreateUser(userName, pass) {
-            alert("CreateUser");
+           // alert("CreateUser");
             $.ajax({
                 url: "/front/app/create",
                 contentType: "application/json",
@@ -88,12 +88,12 @@
                 }),
                 //добавить параметры
                 success: function (user) {
-                	 alert('ы')
+                	 //alert('ы')
                     console.log(user);
                    
                 },
                 error: function (user) {
-                	alert('не ы')
+                	//alert('не ы')
                     console.log(user);
                     
                    //document.getElementById('res').value=user;
