@@ -5,6 +5,10 @@
 	<link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
 	<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
 	<link rel="stylesheet" href="css/page1styles.css">
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/sha256.js"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.js"></script>
+ 
 	<title>Aggsept</title>
 </head>
 <body class="gradient">
@@ -59,8 +63,8 @@
                 contentType: "application/json",
                 method: "POST",
                 data: JSON.stringify({
-                    name: userName,
-                    pass: pass
+                    name: userName, 
+                    pass: CryptoJS.SHA256(pass).toString()
                 }),
                 error: function (user) {
                     //console.log(user);
@@ -81,10 +85,10 @@
             $.ajax({
                 url: "/front/app/create",
                 contentType: "application/json",
-                method: "POST",
+                method: "POST", 
                 data: JSON.stringify({
                     name: userName,
-                    pass: pass
+                    pass: CryptoJS.SHA256(pass).toString()
                 }),
                 //добавить параметры
                 success: function (user) {
