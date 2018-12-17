@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ru" style = 'background-color: #f6f3f7;'>
+<head>
+	<meta charset="UTF-8">
+	<title>Aggsept</title>
+	<link rel="stylesheet" href="css/jquery.scrollbar_a.css">
+	<link rel="stylesheet" href="css/main_a.css">
+	<link rel="stylesheet" href="css/vfim_a.css">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="viewport" content="user-scalable=no, width=device-width"> 
+	<script
+		src="https://code.jquery.com/jquery-3.3.1.min.js"
+		integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+		crossorigin="anonymous"></script>
+	<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700&amp;subset=cyrillic" rel="stylesheet"> 
+</head>
+<body>
+	<div class="container">
+		<div class="header">
+			<div class="header__logo">AGGSEPT</div>
+			<div class="header__burger"><i class="side__icon icon-menu"></i></div>
+			<div class="header__center"></div>
+			<div class="header__right">ВЫХОД НАСТРОЙКИ</div>
+		</div>
+
+
+		<div class="side">
+			<div class="side__icons">
+				<div class="icon inst side__active"><i class="side__icon icon-instagram"></i></div>
+				<a href="vk"><div class="icon"><i class="side__icon icon-vkontakte"></i></div></a>
+				<a href="mail"><div class="icon"><i class="side__icon icon-mail"></i></div></a>
+			</div>
+
+
+			<div class="side__contacts">
+			</div>
+
+
+			<div class="side__search">
+				<form action="">
+					<input type="text" placeholder="Поиск">
+				</form>
+			</div>
+		</div>
+
+		<div class="send">
+			<div>
+				<input class="toSend" type="text" placeholder="Напишите сообщение...">
+				<button class="sendbtn" onclick="sendMessage($('.toSend').val());$('.toSend').value='';">ОТПРАВИТЬ</button>
+			</div>
+		</div>
+
+		<div class="chat">
+			<div class="messages">
+				<div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+var count=0;
+		setTimeout(function () {
+			$('body, html').scrollTop($(document).height());
+		}, 1000);
+
+		$(".toSend").keyup(function(event){
+		    if(event.keyCode == 13){
+		        sendMessage($('.to').val(), $('.title').value(), $('.text').value());
+		    }
+		});
+
+		var myId = 519247984;
+		var my, companion;
+		var active, chatsData;
+
+		$(".toSend").keyup(function(event){
+		    if(event.keyCode == 13){
+		        sendMessage($('.toSend').val());
+		    }
+		});
+
+		$(document).on('click', '.contact', function () {
+			if ( this != active ){
+				companion = $(this).attr("id");
+				console.log(companion);
+				clear();
+				getHistory(companion);
+				toBottom();
+			}
+			if (active == undefined){
+				$(this).addClass('contact__active');
+				active = this;
+			} else if (this != active){
+				$(this).addClass('contact__active');
+				$(active).removeClass('contact__active');
+				active = this;
+			}
+
+		});
+
+		// getInfoAbout("76141337");136742294
+		getChats();
+		setInterval(function(){
+			clear();
+			getHistory(companion);
+			toBottom();
+		}, 120000);
+
+
+		function clear() {
+			$('.message').remove();
+		}
+		function toBottom() {
+			setTimeout(function () {
+				$('body, html').scrollTop($(document).height());
+			}, 100);
+		}
+		function whoAmI() {
+			
+		}
+		function iam(result){ 
+			my = result.response[0];
+			console.log(my);
+			return 0;
+		}
+		function sendMessage(text) {
+			$('form input[type="text"], form input[type="password"], form textarea').val('');
+            let userName = chatsData.messages[companion].messageTitle;
+            let userMessage = text;
+            // сериализуем данные в json
+            let user = JSON.stringify({conversationalistName: userName, messageText: userMessage});
+            let request = new XMLHttpRequest(); 
+             request.open("POST", "/front/app/sendinst", true);   
+             request.setRequestHeader("Content-Type", "application/json");
+             request.addEventListener("load", function () {
+                 console.log(request.response);   // смотрим ответ сервера
+             });
+             //request.send(user);
+			clear();
+			getHistory(companion);
+		}
+		function message(result){
+			var draw = result.response[0];
+			clear(); // start_message_id хоччу 
+			getHistory(companion);
+			toBottom();
+			return 0;
+		} 
+		function getHistory(id) {
+			var url = "/all/"+id.toString();
+			$.ajax({
+				url: url,
+				ontentType: "application/json",
+				success: function (data) {
+					console.log(url);
+					console.log(data);
+					messages(data)
+				}
+			})
+		}
+		function messages(result){
+			var parent = document.getElementsByClassName('messages')[0];
+			var par = parent.getElementsByTagName('div')[0];
+			var len = result.reversedArray.length;
+			if(len==10&&count==0)
+			{
+count++;
+							for (var i = 0; i < len; i++) {
+				var message = document.createElement('div');
+				message.className = "message";
+				var messageFrom = document.createElement('div');
+				if (result.reversedArray[i].msgSide == 1) {
+					messageFrom.className = "message__in";
+				} else {
+					messageFrom.className = "message__out";
+				}
+				var messageBody = document.createElement('div');
+				messageBody.className = "message__body";
+				messageBody.innerHTML = result.reversedArray[i].msgBody;
+				// console.log(result.response[i].body);
+				// var messageAlt = document.createElement('div');
+				// messageAlt.className = "message__alt";
+				// messageAlt.innerHTML = convertDate(result.response[i].date);
+				par.appendChild(message);
+				message.appendChild(messageFrom);
+				messageFrom.appendChild(messageBody);
+				// messageFrom.appendChild(messageAlt);
+
+			}
+			}
+			else{
+			for (var i = 0; i < len; i++) {
+				var message = document.createElement('div');
+				message.className = "message";
+				var messageFrom = document.createElement('div');
+				if (result.reversedArray[i].msgSide == 0) {
+					messageFrom.className = "message__in";
+				} else {
+					messageFrom.className = "message__out";
+				}
+				var messageBody = document.createElement('div');
+				messageBody.className = "message__body";
+				messageBody.innerHTML = result.reversedArray[i].msgBody;
+				// console.log(result.response[i].body);
+				// var messageAlt = document.createElement('div');
+				// messageAlt.className = "message__alt";
+				// messageAlt.innerHTML = convertDate(result.response[i].date);
+				par.appendChild(message);
+				message.appendChild(messageFrom);
+				messageFrom.appendChild(messageBody);
+				// messageFrom.appendChild(messageAlt);
+
+			}
+		}
+			return 0;
+		}
+		function getChats() {
+			$.ajax({
+            	url: "/about",
+                contentType: "application/json",
+                success: function (data) {
+                	chatsData = data;
+                	console.log(data);
+                    chats(data);
+                }
+            });
+		}
+		function chats(result){
+			var par = document.getElementsByClassName('side__contacts')[0];
+			for (var i = 0; i < result.messages.length; i++) {
+				var contact = document.createElement('div');
+				contact.className = "contact";
+				contact.id = i;
+				var img = document.createElement('img');
+				var who = document.createElement('div');
+				who.className = "contact__who";
+				var time = document.createElement('div');
+				time.className = "contact__time";
+				img.src = result.messages[i].profilePic;
+				who.innerHTML = "<p>"+ result.messages[i].messageTitle +"</p><p>"+ result.messages[i].messageBody +"</p>";
+				par.appendChild(contact);
+				contact.appendChild(img);
+				contact.appendChild(who);
+				contact.appendChild(time);
+			}
+			return 0;
+		}
+		function convertDate(UNIX_timestamp){
+			var a = new Date(UNIX_timestamp * 1000);
+			var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+			var year = a.getFullYear();
+			var month = months[a.getMonth()];
+			var date = a.getDate();
+			var hour = a.getHours();
+			var min = a.getMinutes();
+			var sec = a.getSeconds();
+			var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
+			return time;
+		}
+	</script>
+</body>
+</html>

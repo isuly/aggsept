@@ -56,7 +56,7 @@ imap.once('ready', function() {
   openInboxGmail(function(err, box) {
     if (err) throw err;
        // console.log("You have messages in your INBOX: "+box.messages.total);//считает правильно
-    var f = imap.seq.fetch(box.messages.total-3+':'+box.messages.total, {//3 последних
+    var f = imap.seq.fetch(box.messages.total-5+':'+box.messages.total, {//3 последних
       bodies: ['HEADER.FIELDS (FROM SUBJECT DATE)','TEXT'],
       struct: true
     });

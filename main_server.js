@@ -22,6 +22,7 @@ var device = new Client.Device('hey');
 var storage = new Client.CookieFileStorage(__dirname + '/cookies/hey.json'); 
 const fs = require('fs');
 
+
 app.use(express.static('public'));
 app.use(function (req, res, next) {
 
@@ -41,29 +42,25 @@ app.use(function (req, res, next) {
     // Pass to next layer of middleware
     next();
 });
-//протестить весь коннект с бд
-//написать норм комментарии
-//добавить в инст бд??????????
 
-//дальше ответы на запросы
+
+    mongoClient.connect(function(err, client){
+    const db = client.db("final");
+    global.collection = db.collection("users");
+});
+
 
 //регистрация пользователя
 app.post("/front/app/create", jsonParser, function (req, res) {//регистрация только логина и пароля
      console.log("регистрация");
      var resp = {};
     if(!req.body) return res.sendStatus(400);
-     Login = req.body.name;
-     Password = req.body.pass;
-    console.log(req.body.name);
-    console.log(req.body.pass);
+    Login = req.body.name;
+    Password = req.body.pass;
     UserLogin = Login;
     const user = {login: Login, password: Password, mail_login: '' ,mail_password: '' , gmail_login:'' , gmail_password:  '' ,
         yandex_login: '' , yandex_password: '' , inst_login: '' ,inst_password: ''};
-    mongoClient.connect(function(err, client){
-    const db = client.db("final");
-    const collection = db.collection("users");
-
-    //проверять уникальность логина 
+ 
     collection.insertOne(user, function(err, result){//
                
         if(err) 
@@ -81,7 +78,6 @@ app.post("/front/app/create", jsonParser, function (req, res) {//регистр�
     }
     });
 });
-});
 
 app.post("/front/app/createall", jsonParser, function (req, res) {//регистрация остальных
      console.log("регистрация остальных");
@@ -97,14 +93,9 @@ app.post("/front/app/createall", jsonParser, function (req, res) {//регист
      YandexPassword = req.body.yandexpass;
      InstLogin = req.body.instlogin;
      InstPassword = req.body.instpass;
-    //console.log(req.body.name);
-    //console.log(req.body.pass);
-    //const user = {login: Login, password: Password};
-    mongoClient.connect(function(err, client){
-    const db = client.db("final");
-    const collection = db.collection("users");
+
     collection.findOneAndUpdate(
-        {login: Login},              // критерий выборки
+        {login: UserLogin},              // критерий выборки
         { $set: {mail_login: MailLogin,mail_password:  MailPassword, gmail_login: GmailLogin, gmail_password:  GmailPassword,
         yandex_login: YandexLogin, yandex_password:  YandexPassword, inst_login: InstLogin,inst_password:  InstPassword} },     // параметр обновления
         {                           // доп. опции обновления    
@@ -113,28 +104,26 @@ app.post("/front/app/createall", jsonParser, function (req, res) {//регист
         function(err, user){
         	if(err) 
         	{return console.log(err);
-       			 console.log("Регистрация не прошла");
-					    resp.result = false;
-	res.send(resp);
+       			console.log("Регистрация не прошла");
+				resp.result = false;
+				res.send(resp);
         	}
         	else{
         		console.log(user);
-
-			Mail.Connect(user.mail_login, user.mail_password, "mail.ru");//передавать инфу из бд
+   
+			/*Mail.Connect(user.mail_login, user.mail_password, "mail.ru");//передавать инфу из бд
 			global.mail_massages = new Mail.Message();//вызываем метод вытягивания сообщений из майл
 			Yandex.Connect(user.yandex_login, user.yandex_password, "yandex.com");//передавать инфу из бд
 			global.yandex_massages = new Yandex.Message();//вызываем метод вытягивания сообщений из яндекса 
     		Gmail.Connect(user.gmail_login, user.gmail_password, "gmail.com");//передавать инфу из бд
 			global.gmail_massages = new Gmail.Message();
-			UserLogin = Login;
-
-
+			UserLogin = Login;*/
 
     resp.result = true;
 	res.send(resp);
 }
 })
-})
+//})
 });
 
 
@@ -149,56 +138,43 @@ app.post("/front/app/search", jsonParser, function (req, res) {
     var resp = {};
     if(!req.body) return res.sendStatus(400);
 
-			//Mail.Connect("isulyshka@mail.ru", 'literatyra', "mail.ru");//передавать инфу из бд
-			//global.mail_massages = new Mail.Message();//вызываем метод вытягивания сообщений из майл
-			//Yandex.Connect('ebobo.ebobovich@yandex.com', 'literatyra18', "yandex.com");//передавать инфу из бд
-			//global.yandex_massages = new Yandex.Message();//вызываем метод вытягивания сообщений из яндекса 
-
-    	//	Gmail.Connect("isulyfahretdinova@gmail.com", 'literatyra18', "gmail.com");//передавать инфу из бд
-		//	global.gmail_massages = new Gmail.Message();//вызываем метод вытягивания сообщений из жмайл
-	mongoClient.connect(function(err, client){
-
-    const db = client.db("final");
-    const collection = db.collection("users");
-     //app.locals.collection = client.db("final").collection("users");
-  
-        //const collection = req.app.locals.collection;
     collection.findOne({login: Login, password: Password}, function(err, user){
     if(err) 
 	{
 		return console.log(err);
 		resp.result = false;
 		console.log("Aвторизация не прошла");
-		    resp.result = false;
-	res.send(resp);
+		resp.result = false;
+		res.send(resp);
 	}
 	else      
 	{
 		try
 		{
-		if(user.login)//и предусмотреть что у юзера есть не все почты, чтоб тут ничего не ломалось
-		{
-			
-			/*Mail.Connect(mail_login, mail_password, "mail.ru");//передавать инфу из бд
-			global.mail_massages = new Mail.Message();//вызываем метод вытягивания сообщений из майл
-			Yandex.Connect('ebobo.ebobovich@yandex.com', 'literatyra18', "yandex.com");//передавать инфу из бд
-			global.yandex_massages = new Yandex.Message();//вызываем метод вытягивания сообщений из яндекса 
+    	Gmail.Connect("isulyfahretdinova@gmail.com", 'literatyra18', "gmail.com");
+		global.gmail_massages = new Gmail.Message();
 
-    		Gmail.Connect("isulyfahretdinova@gmail.com", 'literatyra18', "gmail.com");//передавать инфу из бд
-			global.gmail_massages = new Gmail.Message();*///вызываем метод вытягивания сообщений из жмайл
-
-
-			Mail.Connect(user.mail_login, user.mail_password, "mail.ru");//передавать инфу из бд
-			global.mail_massages = new Mail.Message();//вызываем метод вытягивания сообщений из майл
-			Yandex.Connect(user.yandex_login, user.yandex_password, "yandex.com");//передавать инфу из бд
-			global.yandex_massages = new Yandex.Message();//вызываем метод вытягивания сообщений из яндекса 
-    		Gmail.Connect(user.gmail_login, user.gmail_password, "gmail.com");//передавать инфу из бд
+/*			if(user.mail_login!='')
+			{
+			Mail.Connect(user.mail_login, user.mail_password, "mail.ru");
+			global.mail_massages = new Mail.Message();
+			}
+			if(user.yandex_login!='')
+			{
+			Yandex.Connect(user.yandex_login, user.yandex_password, "yandex.com");
+			global.yandex_massages = new Yandex.Message();
+			}
+			if(user.gmail_login!='')
+			{
+    		Gmail.Connect(user.gmail_login, user.gmail_password, "gmail.com");
 			global.gmail_massages = new Gmail.Message();
+			}
+*/
 			UserLogin = Login;
 			console.log("Aвторизация прошла успешно");
-    		    resp.result = true;
-	res.send(resp);
-		}
+    		resp.result = true;
+			res.send(resp);
+		//}
 		}
 		catch
 		{
@@ -208,39 +184,18 @@ app.post("/front/app/search", jsonParser, function (req, res) {
 		}
 	}
 });
-  });
+//  });
 });
     //запрос на список сообщений
 app.get("/front/gmail", urlencodedParser, function (req, res) {
-	
-	/*for (var i=0; i<gmail_massages.length; i++)
-	{
-	console.log(gmail_massages[i].head);
-	console.log(gmail_massages[i].body);
-}*/
 	res.send(gmail_massages);
-	//SendMail.MailSend();
 });
 
 app.get("/front/mail", urlencodedParser, function (req, res) {
-	
-	/*for (var i=0; i<mail_massages.length; i++)
-	{
-	console.log(mail_massages[i].head);
-	console.log(mail_massages[i].body);
-}*/
 	res.send(mail_massages);
-	//SendMail.MailSend();
 });
-app.get("/front/gmail", urlencodedParser, function (req, res) {
-	
-	/*for (var i=0; i<yandex_massages.length; i++)
-	{
-	console.log(yandex_massages[i].head);
-	console.log(yandex_massages[i].body);
-}*/
+app.get("/front/yandex", urlencodedParser, function (req, res) {
 	res.send(yandex_massages);
-	//SendMail.MailSend();
 });
 
 
@@ -264,11 +219,8 @@ var resp = {};
     //console.log(req.body.pass);
     if(!req.body) return res.sendStatus(400);
 
-	mongoClient.connect(function(err, client){
-
-    const db = client.db("final");
     //const collection = db.collection("users");
-    //collection.findOne({login: UserLogin}, function(err, user){
+    collection.findOne({login: UserLogin}, function(err, user){
     if(false) 
 	{
 		return console.log(err);
@@ -317,8 +269,8 @@ var resp = {};
 	}
 
 });
+
 });
-//});
 
 
 //Сюда передай через урл номер сообщения
@@ -343,30 +295,47 @@ const number = Number(request.params.num);
 
 //отправка сообщений в инсту
 // сюда передать кому и что отправить
-app.post("/front/app/sendinst", jsonParser, function (req, res) {
+app.post("/front/app/sendinst", jsonParser, function (request, response) 
+{ 
+  var login = 'ms.isulysha';
+  var password = 'literatyra18'; 
+  var conversationalistName = request.body.conversationalistName; 
+    var messageText = request.body.messageText; 
+ console.log(conversationalistName);
     console.log("send inst");
+  Client.Session.create(device, storage, login, password)
+  .then(function(session) 
+  {
+        var accountId = storage.getAccountId()//user's acc id
+        .then(function(accountId)
+          { 
+              return  accountId;
+            })
 
-    mongoClient.connect(function(err, client){
+        .then(function(username)
+        { 
+          return Client.Account.searchForUser(session, conversationalistName) //also can fetch from threadItem!
+          .then(function(account) 
+            { 
+              //console.log (account.id); //another person's acc id
+              var conversationalistId = account.id; 
 
-    const db = client.db("final");
-    const collection = db.collection("users");
-    collection.findOne({login: UserLogin}, function(err, user){
-    if(err) 
-	{
-		return console.log(err);
-		resp.result = false;
-		console.log("Aвторизация не прошла");
-		    resp.result = false;
-	res.send(resp);
-	}
-	else      
-	{
-    sendDirectMessage.sendDM(user.inst_login, user.inst_password, 'imciflam', 'it works');
-    }
-})
-    })
+              return conversationalistId; 
+            }) 
+          .catch(function(account)
+            { 
+              console.error(err.message)
+            }); 
+        })
+
+        .then(function(conversationalistId) 
+        {
+         return Client.Thread.configureText(session, conversationalistId, messageText);
+        })
+    });
+     
+    
 });
-
 //});
 //дописать передачу параметров
  app.get("/about", function(request, response)
@@ -439,168 +408,126 @@ let promise = new Client.Session.create(device, storage, 'ms.isulysha', 'literat
 });
 
 //дописать передачу параметров
- app.get("/all", function(request, response)
- {
- 
-        
-var chatThread = {};
-var msgs = [];
-var flags = [];
-chatThread.msgs = msgs;
+ app.get("/all/:num", urlencodedParser, function(request, response) {
+    const number = Number(request.params.num);
+    var chatThread = {};
+    var msgs = [];
+    chatThread.msgs = msgs;
 
-let promise = Client.Session.create(device, storage, 'ms.isulysha', 'literatyra18')
-    .then(function(session) {
-        var accountId = storage.getAccountId()//user's acc id
+    let promise = Client.Session.create(device, storage, 'ms.isulysha', 'literatyra18')
+        .then(function(session) {
+            var accountId = storage.getAccountId() //user's acc id
 
 
-        .then(function(accountId)
-            { 
+            .then(function(accountId) {
                 //console.log(accountId); //user's acc id
-                return  accountId;
-            }) 
+                return accountId;
+            })
 
 
-        .then(function () { 
-            new Client.Feed.Inbox(session).get()
+            .then(function() {
+                new Client.Feed.Inbox(session).get()
 
 
-            .then(function (t) 
-                { 
+                .then(function(t) {
                     // console.log(t.length); //chats amount
-                     var threadId = t[0]._params.threadId;//номер чатика сверху
-                     return threadId;//gets threadId
-                    
+                    var threadId = t[number]._params.threadId; //номер чатика сверху
+                    return threadId; //gets threadId
+
                 })
 
 
-      .then(function (threadId, accountId)
-      { 
-        var mediaArray = [];
+                .then(function(threadId, accountId) {
+                    var mediaArray = [];
 
-        let anotherfeed = new Client.Feed.ThreadItems(session, threadId , 10)//last 20 thread items
-        anotherfeed.get()
-
-
-        .then(function(messages)
-        { 
-            if (mediaArray.length < 1 || mediaArray[mediaArray.length - 1].id !== messages[messages.length - 1]._params.id) 
-            {
-            for (let i=9; i>=0; i--)//last 10 messages, chronological order
-            {  
-                if (messages[i]!=undefined && messages[i]._params.text!=undefined)
-                {    
-                   
-                     var msgTitle = messages[i]._params.userId;
-                     var msgBody = messages[i]._params.text; 
-                     var msg = 
-                     {
-                        "msgTitle": msgTitle,
-                        "msgBody": msgBody, 
-                        "msgSide": 0
-                     }
-                     chatThread.msgs.push(msg); 
-    
-                  storage.getAccountId()
-                  .then(function(accountId)
-                  {  
-                  if (messages[i]._params.userId==accountId)
-                     {  
-                    chatThread.msgs[i].msgSide = 1; 
- 
-                     }  
-                     chatThread.msgs.push("msgSide: " + chatThread.msgs[i].msgSide); 
-                    delete chatThread.msgs[i]['msgSide'];
- 
-
-                     if (i==0)
-                    {  
-                      console.log(chatThread);
-                       response.send(chatThread);
+                    let anotherfeed = new Client.Feed.ThreadItems(session, threadId, 10) //last 20 thread items
+                    anotherfeed.get()
 
 
+                    .then(function(messages) {
+                        if (mediaArray.length < 1 || mediaArray[mediaArray.length - 1].id !== messages[messages.length - 1]._params.id) {
+                            for (let i = 9; i >= 0; i--) //last 10 messages, chronological order
+                            {
+                                if (messages[i] != undefined && messages[i]._params.text != undefined) {
+
+                                    var msgTitle = messages[i]._params.userId;
+                                    var msgBody = messages[i]._params.text;
+                                    var msg = {
+                                        "msgTitle": msgTitle,
+                                        "msgBody": msgBody,
+                                        "msgSide": 0
+                                    }
+                                    chatThread.msgs.push(msg);
+
+                                    // console.log(messages[i]._params.userId);
+                                    //console.log(messages[i]._params.text);
+                                    storage.getAccountId()
+                                        .then(function(accountId) {
+                                            if (messages[i]._params.userId == accountId && messages[i]._params.userId != "undefined") {
+
+                                                // var x = getUsernameById(messages[i]._params.userId);
+                                                console.log('message ' + i + ' was written by current user');
+                                                chatThread.msgs[i].msgSide = 1;
+
+                                            }
+                                            reversedArray = chatThread.msgs.reverse()
+                                            if (i == 0) {
+                                                var reversedThread = {};
+                                                reversedThread.reversedArray = reversedArray;
+                                                //  console.log (reversedArray);
+                                                response.send(reversedThread);
+                                            }
+                                        })
+
+                                }
 
 
+                            }
 
+                        }
 
+                    })
+                })
 
-                      //  var reversedThread = {};
-                      //  reversedThread.reversedArray = reversedArray; 
-                        // console.log(reversedArray); 
-                        // response.send(reversedThread);
-                    }
-                  }) 
-              }
-             }    
-         }
+            })
         })
-       })
-      })
-    })
+
 });
-
-
 
 //обновление
 app.get("/front/app/search", jsonParser, function (req, res) {
        console.log("обновление");
      var resp = {};
-mongoClient.connect(function(err, client){
 
-    const db = client.db("final");
-    const collection = db.collection("users");
     collection.findOne({login: UserLogin}, function(err, user){
     if(err) 
 	{
 		return console.log(err);
-		resp.result = false;
 		console.log("(((((");
-		    resp.result = false;
-	res.send(resp);
+		resp.result = false;
+		res.send(resp);
 	}
 	else      
 	{
-			//и предусмотреть что у юзера есть не все почты, чтоб тут ничего не ломалось
+		try{
 			Mail.Connect(user.mail_login, user.mail_password, "mail.ru");//передавать инфу из бд
 			global.mail_massages = new Mail.Message();//вызываем метод вытягивания сообщений из майл
 			response.send(mail_massages);
 		}
-})
-        })
-   });
-//обновление
-app.get("/front/app/search", jsonParser, function (req, res) {
-       console.log("обновление");
-     var resp = {};
-mongoClient.connect(function(err, client){
-
-    const db = client.db("final");
-    const collection = db.collection("users");
-    collection.findOne({login: UserLogin}, function(err, user){
-    if(err) 
-	{
-		return console.log(err);
+		catch
+		{
+		console.log("(((((");
 		resp.result = false;
-		console.log("Aвторизация не прошла");
-		    resp.result = false;
-	res.send(resp);
-	}
-	else      
-	{
-    		Gmail.Connect(user.gmail_login, user.gmail_password, "gmail.com");//передавать инфу из бд
-			global.gmail_massages = new Gmail.Message();//вызываем метод вытягивания сообщений из жмайл
-			response.send(gmail_massages);
+		res.send(resp);
 		}
-})
+	}
 })
 });
 //обновление
 app.get("/front/app/search", jsonParser, function (req, res) {
        console.log("обновление");
      var resp = {};
-mongoClient.connect(function(err, client){
 
-    const db = client.db("final");
-    const collection = db.collection("users");
     collection.findOne({login: UserLogin}, function(err, user){
     if(err) 
 	{
@@ -612,12 +539,51 @@ mongoClient.connect(function(err, client){
 	}
 	else      
 	{
+		try
+			{
+    		Gmail.Connect(user.gmail_login, user.gmail_password, "gmail.com");//передавать инфу из бд
+			global.gmail_massages = new Gmail.Message();//вызываем метод вытягивания сообщений из жмайл
+			response.send(gmail_massages);
+			}
+		catch
+		{
+		console.log("(((((");
+		resp.result = false;
+		res.send(resp);
+		}
+		}
+})
+//})
+});
+//обновление
+app.get("/front/app/search", jsonParser, function (req, res) {
+       console.log("обновление");
+     var resp = {};
+
+    collection.findOne({login: UserLogin}, function(err, user){
+    if(err) 
+	{
+		return console.log(err);
+		resp.result = false;
+		console.log("Aвторизация не прошла");
+		    resp.result = false;
+	res.send(resp);
+	}
+	else      
+	{
+		try{
 			Yandex.Connect(user.yandex_login, user.yandex_password, "yandex.com");//передавать инфу из бд
 			global.yandex_massages = new Yandex.Message();//вызываем метод вытягивания сообщений из яндекса 
 			response.send(yandex_massages);
+			}
+		catch
+		{
+		console.log("(((((");
+		resp.result = false;
+		res.send(resp);
+		}
 		}
 })
-    })
    });
 
    //запуск фронта
@@ -625,10 +591,91 @@ app.get("/front/", urlencodedParser, function (request, response) {
     response.sendFile(__dirname + "/index.html");
     //response.sendFile(__dirname + "/firstpagejs.js");
 });
+app.get("/page2", urlencodedParser, function (request, response) {
+    response.sendFile(__dirname + "/public/page2.html");
+    //response.sendFile(__dirname + "/firstpagejs.js");
+});
+app.get("/page3", urlencodedParser, function (request, response) {
+    response.sendFile(__dirname + "/public/page3.html");
+    //response.sendFile(__dirname + "/firstpagejs.js");
+});
+app.get("/insta", urlencodedParser, function(request, response) {
+    response.sendFile(__dirname + "/insta.html");
+});
+
+app.get("/mail", urlencodedParser, function(request, response) {
+    response.sendFile(__dirname + "/mail.html");
+});
+
+app.get("/gmail", urlencodedParser, function(request, response) {
+    response.sendFile(__dirname + "/gmail.html");
+});
+
+app.get("/yandex", urlencodedParser, function(request, response) {
+    response.sendFile(__dirname + "/yandex.html");
+});
+app.get("/vk", urlencodedParser, function(request, response) {
+    response.sendFile(__dirname + "/vk.html");
+});
 /*app.get("/front/", urlencodedParser, function (request, response) {
     response.sendFile(__dirname + "/front.html");
     //response.sendFile(__dirname + "/firstpagejs.js");
 });*/
+
+app.get("/front/getServises", function(request, res){
+	console.log('все');
+    var resp = {};
+    collection.findOne({login: 'isulysha'}, function(err, user){
+    if(err) 
+	{
+		return console.log(err);
+		//resp.result = false;
+		//console.log("Aвторизация не прошла");
+		resp.result = false;
+		res.send(resp);
+	}
+	else      
+	{
+		console.log(user);
+		resp.result = true;
+		//resp.mail = 
+    try
+		{
+
+		if(user.login)//и предусмотреть что у юзера есть не все почты, чтоб тут ничего не ломалось
+		{
+			if(user.inst_login!='')
+			{
+				resp.inst = user.inst_login;
+		}
+		else{resp.inst = false;}
+
+			if(user.mail_login!='')
+			{
+				resp.mail = user.mail_login;
+			}
+		else{resp.mail = false;}
+		if(user.yandex_login!='')
+			{
+				resp.yandex = user.yandex_login;
+		}
+			else{resp.yandex = false;}
+			if(user.gmail_login!='')
+			{
+				resp.gmail = user.gmail_login;
+}
+else{resp.gmail = false;}
+res.send(resp);
+}
+}
+catch
+{
+	resp.result = false;
+	res.send(resp);
+}
+}
+});
+    });
 
 app.get("/", function(request, response){
     response.send("Главная страница");

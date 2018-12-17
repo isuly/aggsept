@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ru" style = 'background-color: #f6f3f7;'>
+<head>
+	<meta charset="UTF-8">
+	<title>Aggsept</title>
+	<link rel="stylesheet" href="css/jquery.scrollbar_a.css">
+	<link rel="stylesheet" href="css/main_a.css">
+	<link rel="stylesheet" href="css/vfim_a.css">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="viewport" content="user-scalable=no, width=device-width"> 
+	<script
+		src="https://code.jquery.com/jquery-3.3.1.min.js"
+		integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+		crossorigin="anonymous"></script>
+	<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700&amp;subset=cyrillic" rel="stylesheet"> 
+</head>
+<body>
+	<div class="container">
+		<div class="header">
+			<div class="header__logo">AGGSEPT</div>
+			<div class="header__burger"><i class="side__icon icon-menu"></i></div>
+			<div class="header__center"></div>
+			<div class="header__right">ВЫХОД НАСТРОЙКИ</div>
+		</div>
+
+
+		<div class="side">
+			<div class="side__icons">
+				<a href="insta"><div class="icon inst"><i class="side__icon icon-instagram"></i></div></a>
+				<div class="icon side__active"><i class="side__icon icon-vkontakte"></i></div>
+				<a href="mail"><div class="icon"><i class="side__icon icon-mail"></i></div></a>
+			</div>
+
+			<div class="side__contacts">
+			</div>
+			<div class="side__search">
+				<form action="">
+					<input type="text" placeholder="Поиск">
+				</form>
+			</div>
+		</div>
+
+		<div class="send">
+			<div>
+				<input class="toSend" type="text" placeholder="Напишите сообщение...">
+				<button class="sendbtn" onclick="sendMessage($('.toSend').val());">ОТПРАВИТЬ</button>
+			</div>
+		</div>
+
+		<div class="chat">
+			<div class="messages">
+				<div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+		setTimeout(function () {
+			$('body, html').scrollTop($(document).height());
+		}, 1000);
+
+
+		var myId = 519247984;
+		var my, companion;
+		var active;
+
+		$(".toSend").keyup(function(event){
+		    if(event.keyCode == 13){
+		        sendMessage($('.toSend').val());
+		        $('.toSend').value='';
+		    }
+		});
+
+		$(document).on('click', '.contact', function () {
+			if ( this != active ){
+				companion = $(this).attr("id");
+				console.log(companion);
+				clear();
+				getHistory(companion);
+				toBottom();
+			}
+			if (active == undefined){
+				$(this).addClass('contact__active');
+				active = this;
+			} else if (this != active){
+				$(this).addClass('contact__active');
+				$(active).removeClass('contact__active');
+				active = this;
+			}
+
+		});
+
+
+		whoAmI();
+		// getInfoAbout("76141337");136742294
+		getChats();
+
+
+		function clear() {
+			$('.message').remove();
+		}
+		function toBottom() {
+			setTimeout(function () {
+				$('body, html').scrollTop($(document).height());
+			}, 100);
+		}
+		function whoAmI() {
+			var script = document.createElement('script');
+			script.src = "https://api.vk.com/method/users.get?&fields=photo_100%2C&params[name_case]=Nom&params[v]=5.92&access_token=f6ac8e5f39efe0c0564bd0cc2753d3ba6015bc44bfe22e862133eda263102ddde1703be260b334f7c81d4&v=V&callback=iam";
+			document.getElementsByTagName("body")[0].appendChild(script);
+		}
+		function iam(result){ 
+			my = result.response[0];
+			console.log(my);
+			return 0;
+		}
+		function sendMessage(text) {
+			$('form input[type="text"], form input[type="password"], form textarea').val('');
+			var script = document.createElement('script');
+			script.src = "https://api.vk.com/method/messages.send?user_id="+ companion +"&message="+ text +"&params[dont_parse_links]=0&v=5.92&access_token=f6ac8e5f39efe0c0564bd0cc2753d3ba6015bc44bfe22e862133eda263102ddde1703be260b334f7c81d4&v=V&callback=message";
+			document.getElementsByTagName("body")[0].appendChild(script);
+		}
+		function message(result){
+			var draw = result.response[0];
+			clear(); // start_message_id хоччу 
+			getHistory(companion);
+			toBottom();
+			return 0;
+		} 
+		function getHistory(id) {
+			var script = document.createElement('script');
+			script.src = "https://api.vk.com/method/messages.getHistory?params[offset]=0&count=20&user_id="+ id +"&rev=1&params[extended]=0&params[v]=5.80&access_token=f6ac8e5f39efe0c0564bd0cc2753d3ba6015bc44bfe22e862133eda263102ddde1703be260b334f7c81d4&v=V&callback=messages";
+			document.getElementsByTagName("body")[0].appendChild(script);
+		}
+		function messages(result){
+			var parent = document.getElementsByClassName('messages')[0];
+			var par = parent.getElementsByTagName('div')[0];
+			for (var i = 1; i <= result.response[0]; i++) {
+				var message = document.createElement('div');
+				message.className = "message";
+				var messageFrom = document.createElement('div');
+				if (myId != result.response[i].uid) {
+					messageFrom.className = "message__in";
+				} else {
+					messageFrom.className = "message__out";
+				}
+				var messageBody = document.createElement('div');
+				messageBody.className = "message__body";
+				messageBody.innerHTML = result.response[i].body;
+				// console.log(result.response[i].body);
+				var messageAlt = document.createElement('div');
+				messageAlt.className = "message__alt";
+				messageAlt.innerHTML =convertDate(result.response[i].date);
+				par.appendChild(message);
+				message.appendChild(messageFrom);
+				messageFrom.appendChild(messageBody);
+				messageFrom.appendChild(messageAlt);
+
+			}
+			return 0;
+		}
+		function getChats() {
+			var script = document.createElement('script');
+			script.src = "https://api.vk.com/method/messages.getConversations?params[offset]=0&count=30&filter=all&params[extended]=0&params[v]=5.92&access_token=f6ac8e5f39efe0c0564bd0cc2753d3ba6015bc44bfe22e862133eda263102ddde1703be260b334f7c81d4&v=V&callback=chats";
+			document.getElementsByTagName("body")[0].appendChild(script);
+		}
+		var chatsInfo, chatsMain;
+		function chats(result){
+			var ids = '';
+			for (var i = 1; i <= result.response[0]; i++) {
+				ids += result.response[i].conversation.peer.id;
+				if (result.response[0] != i){
+					ids += ",";
+				}
+			}
+			if (chatsMain == undefined){
+				chatsMain = result;
+			} else {
+				chatsMain += result;
+			}
+			getInfoAbout(ids);
+			return 0;
+		}
+		function getInfoAbout(ids) {
+			var script = document.createElement('script');
+			script.src = "https://api.vk.com/method/users.get?user_ids="+ ids +"&fields=photo_100%2C&params[name_case]=Nom&params[v]=5.92&access_token=f6ac8e5f39efe0c0564bd0cc2753d3ba6015bc44bfe22e862133eda263102ddde1703be260b334f7c81d4&v=V&callback=companion";
+			document.getElementsByTagName("body")[0].appendChild(script);
+		}
+		function companion(result){
+			if (chatsInfo == undefined){
+				chatsInfo = result;
+			} else {
+				chatsInfo += result;
+			}
+			// console.log('chatsInfo', chatsInfo);
+			drawChats();
+			return 0;
+		} 
+		function drawChats(){
+			console.log(chatsMain);
+			console.log(chatsInfo);
+			var par = document.getElementsByClassName('side__contacts')[0];
+			for (var i = 1; i <= chatsMain.response[0]; i++) {
+				console.log(i);
+				var contact = document.createElement('div');
+				contact.className = "contact";
+				contact.id = chatsMain.response[i].conversation.peer.id;
+				var img = document.createElement('img');
+				var who = document.createElement('div');
+				who.className = "contact__who";
+				var time = document.createElement('div');
+				time.className = "contact__time";
+				if (chatsMain.response[i].conversation.peer.type == "user") {
+					for (var j = 0; j < chatsMain.response[0];j++) {
+						if (chatsMain.response[i].conversation.peer.id == chatsInfo.response[j].uid) {
+							img.src = chatsInfo.response[j].photo_100;
+							who.innerHTML = "<p>"+ chatsInfo.response[j].first_name + ' ' + chatsInfo.response[j].last_name +"</p><p>"+ chatsMain.response[i].last_message.text +"</p>"
+						}
+					}
+				}
+				par.appendChild(contact);
+				contact.appendChild(img);
+				contact.appendChild(who);
+				contact.appendChild(time);
+			}
+			return 0;
+		}
+
+		function convertDate(UNIX_timestamp){
+			var a = new Date(UNIX_timestamp * 1000);
+			var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+			var year = a.getFullYear();
+			var month = months[a.getMonth()];
+			var date = a.getDate();
+			var hour = a.getHours();
+			var min = a.getMinutes();
+			var sec = a.getSeconds();
+			var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
+			return time;
+		}
+</script>
+</body>
+</html> 
+
+	</script>
+</body>
+</html>
