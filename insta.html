@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" style = 'background-color: #f6f3f7;'>
 <head>
 	<meta charset="UTF-8">
 	<title>Aggsept</title>
@@ -163,11 +163,11 @@
 			var parent = document.getElementsByClassName('messages')[0];
 			var par = parent.getElementsByTagName('div')[0];
 			var len = result.reversedArray.length;
-			for (var i = 0; i < len; i++) {
+			for (var i = len-1; i > -1; i--) {
 				var message = document.createElement('div');
 				message.className = "message";
 				var messageFrom = document.createElement('div');
-				if (result.reversedArray[i].msgSide == 1) {
+				if (result.reversedArray[i].msgSide == 0) {
 					messageFrom.className = "message__in";
 				} else {
 					messageFrom.className = "message__out";

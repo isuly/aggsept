@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>Aggsept</title>
-	<link rel="stylesheet" href="css/main2.css">
-	<link rel="stylesheet" href="css/vfim2.css">
+	<title>hi</title>
+	<link rel="stylesheet" href="css/main3.css">
+	<link rel="stylesheet" href="css/vfim3.css">
 	<link 
 		href="https://fonts.googleapis.com/css?family=Montserrat" 
 		rel="stylesheet">
@@ -20,15 +20,14 @@
 		crossorigin="anonymous"></script>
 </head>
 <body>
-
-	<div class="container"> 
+	<div class="container">
 		 <h2>Aggsept</h2>
 		<div class="list">
-			<form>
+			<form onsubmit="FA(this.name);return false" name="set_from" id="form">
 				<div class="list__body">
 					<div class="list__add">
 						<div class="list__add-btn">
-							 <p>Добавить аккаунт:<br></p>
+							<p>Добавить аккаунт:<br></p>
 
 
 								<div class="addEmail"><img src = "email.png" width = "50px" height = "50px"></div> 
@@ -39,43 +38,19 @@
 
 								<div class="addInst"><img src = "insta.png" width = "50px" height = "50px"></div>
 
-
-
-							 
-
-
 						</div>
 					</div>
 					<div class="list__accounts">
 
-						<!--<div class="account">
-							<div class="account__img">
-								<i class="icon-mail-alt"></i>
-							</div>
-							<div class="account__data">
-								<div class="group">      
-									<input type="text" required>
-									<span class="highlight"></span>
-									<span class="bar"></span>
-									<label>Маил</label>
-								</div>
-								
-								<div class="group">      
-									<input type="text" required>
-									<span class="highlight"></span>
-									<span class="bar"></span>
-									<label>Пароль</label>
-								</div>
-							</div>
-							<div class="account__red">Удалить</div>-->
-						</div>
+						 
 					</div>
 				</div>
-				<button onclick="Registration():window.location.href='http://localhost:5000/gmail';" >Продолжить</button>
+				<button  >Продолжить</button>
 			</form>
 		</div>
 	</div>	
 	<script>
+		var mail = 2, insta = 1, vk = 1;
 		$(document).on('click', '.addEmail', function () {
 			var par = document.getElementsByClassName('list__accounts')[0];
 			console.log('lllll');
@@ -86,7 +61,7 @@
 			accountImg.innerHTML = '<i class="icon-mail-alt"></i>'
 			var accountData = document.createElement('div');
 			accountData.className = "account__data";
-			accountData.innerHTML = '<div class="group"><input type="text" required><span class="highlight"></span><span class="bar"></span><label>Маил</label></div><div class="group"><input type="text" required><span class="highlight"></span><span class="bar"></span><label>Пароль</label></div>';
+			accountData.innerHTML = '<div class="group"><input type="text" name="mail" required><span class="highlight"></span><span class="bar"></span><label>Маил</label></div><div class="group"><input type="password" name="mail" required><span class="highlight"></span><span class="bar"></span><label>Пароль</label></div>';
 			var accountRed = document.createElement('div');
 			accountRed.className = "account__red";
 			accountRed.innerHTML = 'Удалить';
@@ -94,8 +69,9 @@
 			account.appendChild(accountImg);
 			account.appendChild(accountData);
 			account.appendChild(accountRed);
+			mail++;
 		});
-		$(document).on('click', '.addVk', function () {
+		$(document).one('click', '.addVk', function () {
 			var par = document.getElementsByClassName('list__accounts')[0];
 			console.log('lllll');
 			var account = document.createElement('div');
@@ -105,15 +81,15 @@
 			accountImg.innerHTML = '<i class="icon-vkontakte"></i>'
 			var accountData = document.createElement('div');
 			accountData.className = "account__data";
-			accountData.innerHTML = '<div class="group"><input type="text" required><span class="highlight"></span><span class="bar"></span><label>Логин</label></div><div class="group"><input type="text" required><span class="highlight"></span><span class="bar"></span><label>Пароль</label></div>';
+			accountData.innerHTML = '<div class="group"><input type="text" name="vk" required><span class="highlight"></span><span class="bar"></span><label>Логин</label></div><div class="group"><input type="password" name="vk" required><span class="highlight"></span><span class="bar"></span><label>Пароль</label></div>';
 			var accountRed = document.createElement('div');
 			accountRed.className = "account__red";
 			accountRed.innerHTML = 'Удалить';
-
 			par.insertBefore(account, par.firstChild);
 			account.appendChild(accountImg);
 			account.appendChild(accountData);
 			account.appendChild(accountRed);
+			vk++;
 		});
 		$(document).one('click', '.addInst', function () {
 			var par = document.getElementsByClassName('list__accounts')[0];
@@ -125,7 +101,7 @@
 			accountImg.innerHTML = '<i class="icon-instagram"></i>'
 			var accountData = document.createElement('div');
 			accountData.className = "account__data";
-			accountData.innerHTML = '<div class="group"><input type="text" required><span class="highlight"></span><span class="bar"></span><label>Логин</label></div><div class="group"><input type="text" required><span class="highlight"></span><span class="bar"></span><label>Пароль</label></div>';
+			accountData.innerHTML = '<div class="group"><input type="text" name="insta" required><span class="highlight"></span><span class="bar"></span><label>Логин</label></div><div class="group"><input type="password" name="insta" required><span class="highlight"></span><span class="bar"></span><label>Пароль</label></div>';
 			var accountRed = document.createElement('div');
 			accountRed.className = "account__red";
 			accountRed.innerHTML = 'Удалить';
@@ -133,43 +109,49 @@
 			account.appendChild(accountImg);
 			account.appendChild(accountData);
 			account.appendChild(accountRed);
+			insta++;
 		});
 		$(document).on('click', '.account__red', function () {
 			$(this).parent().remove();
 		});
 
 
-		function Registration() {
-            alert("reg");
-
-            $.ajax({
-                url: "/front/app/createall",
-                contentType: "application/json",
-                method: "POST",
-                data: JSON.stringify({
-					maillogin: 'maillogin',
-                    mailpass: 'mailpass',
-                    gmaillogin: 'gmaillogin',
-                    gmailpass: 'gmailpass',
-                    yandexlogin: 'yandexlogin',
-                    yandexpass: 'yandexpass',
-                    instlogin: 'instlogin',
-                    instpass: 'instpass'
-                }),
-                error: function (user) {
-                    console.log(user);
-                    alert('не ы')
-                   //document.getElementById('res').value=user;
-                },
-                success: function (user) {
-                    console.log(user);
-                    alert('ы')
-                    //window.location.replace("2/post2.html");
-
-                   //document.getElementById('res').value=user;
-                }
-            })
-        }
+		function FA(){
+			var mas = [];
+		    var data = {};
+		    var k = 0;
+		    var log, pass;
+			$('#form').find ('input, textearea, select').each(function() 
+			{
+				if (k==0){
+					log = $(this).val();
+					k = 1;
+				}
+				else{
+					pass = $(this).val();
+					k = 0;
+					
+					data["what"] = this.name; 
+					data["login"] = log;
+					data["password"] = pass;
+					if (data["what"]=="mail")
+					{
+						var regexp = /@(\w+)/;
+						var x = data["login"].match(regexp);
+						data["mailtype"] = x[1];
+					}
+					else
+					{
+						data["mailtype"] = "";
+					}
+					mas.push(data); 
+					data = {};     
+				}
+			});
+			 
+			console.log(mas);
+		 }
+ 
 	</script>
 </body>
 </html>
